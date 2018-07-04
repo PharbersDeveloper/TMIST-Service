@@ -1,16 +1,15 @@
-package module.checkpoint
+package module.scenario
 
 import module.roles.role
-import module.roles.RoleMessage._
+import module.common.processor
 import play.api.libs.json.Json.toJson
+import module.scenario.CheckpointMessage._
 import play.api.libs.json.{JsValue, Json}
 import com.pharbers.bmpattern.ModuleTrait
-import module.checkpoint.CheckpointMessage._
 import com.pharbers.pharbersmacro.CURDMacro._
-import module.common.{MergeStepResult, processor}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
 
-object CheckpointModule extends ModuleTrait {
+object ScenarioModule extends ModuleTrait {
     val role = new role()
     import role._
     val name = "checkppoint"
@@ -19,11 +18,10 @@ object CheckpointModule extends ModuleTrait {
     def dispatchMsg(msg: MessageDefines)(pr: Option[Map[String, JsValue]])
                    (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
-        case msg_pushCheckpoint(data) => pushMacro(d2m, ssr, data, names, name)
-        case msg_popRole(data) => popMacro(qc, popr, data, names)
-        case msg_updateCheckpoint(data) => updateMacro(qc, up2m, dr, data, names, name)
-        case msg_queryCheckpoint(data) => queryMacro(qc, dr, MergeStepResult(data, pr), names, name)
-        case msg_queryCheckpointMulti(data) =>
+        case msg_getHospLst(data) => pushMacro(d2m, ssr, data, names, name)
+        case msg_getBudgetInfo(data) => popMacro(qc, popr, data, names)
+        case msg_getHumansInfo(data) => updateMacro(qc, up2m, dr, data, names, name)
+        case msg_getHospDetail(data) =>
             //queryMultiMacro(???, ???, MergeStepResult(data, pr), names, names)
             processor (value => getCheckpointMulti(value))(data)
 
