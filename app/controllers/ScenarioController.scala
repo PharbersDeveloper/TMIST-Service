@@ -21,8 +21,12 @@ class ScenarioController @Inject()(implicit as_inject: ActorSystem, dbt: dbInsta
 		Ok(views.html.index())
 	}
 
-	def getBudgetInfo() = Action {
-		Ok(views.html.index())
+	def getBudgetInfo() = Action { request =>
+		requestArgsQuery().requestArgs(request) { jv =>
+			MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
+				
+				:: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+		}
 	}
 
 	def getHumansInfo() = Action { request =>
