@@ -3,9 +3,21 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
-GET     /                           controllers.TmistController.index()
+GET     /                               controllers.TmistController.index()
+GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
 
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+# 关卡设置
+POST    /api/checkpoint/push            controllers.CheckpointController.pushCheckpoint()
+POST    /api/checkpoint/pop             controllers.CheckpointController.popCheckpoint()
+POST    /api/checkpoint/update          controllers.CheckpointController.updateCheckpoint()
+POST    /api/checkpoint/query           controllers.CheckpointController.queryCheckpoint()
+POST    /api/checkpoint/query/multi     controllers.CheckpointController.queryMultiCheckpoint()
+
+# 关卡内信息
+POST    /api/scenario/hospital/lst      controllers.ScenarioController.getHospLst()
+POST    /api/scenario/budget/info       controllers.ScenarioController.getBudgetInfo()
+POST    /api/scenario/humans/info       controllers.ScenarioController.getHumansInfo()
+POST    /api/scenario/hospital/detail   controllers.ScenarioController.getHospDetail()
 
 # 文件上传
-#POST   /api/file/upload             controllers.upload.FopController.uploadFile
+#POST   /api/file/upload                controllers.upload.FopController.uploadFile
