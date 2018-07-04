@@ -1,6 +1,7 @@
 package module.checkpoint
 
 import module.roles.role
+import module.common.processor._
 import module.roles.RoleMessage._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsValue, Json}

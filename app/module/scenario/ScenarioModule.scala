@@ -2,6 +2,7 @@ package module.scenario
 
 import module.roles.role
 import module.common.processor
+import module.common.processor._
 import play.api.libs.json.Json.toJson
 import module.scenario.CheckpointMessage._
 import play.api.libs.json.{JsValue, Json}
@@ -20,58 +21,90 @@ object ScenarioModule extends ModuleTrait {
 
         case msg_getHospLst(data) => pushMacro(d2m, ssr, data, names, name)
         case msg_getBudgetInfo(data) => popMacro(qc, popr, data, names)
-        case msg_getHumansInfo(data) => updateMacro(qc, up2m, dr, data, names, name)
+        case msg_getHumansInfo(data) =>
+            //updateMacro(qc, up2m, dr, data, names, name)
+            processor (value => getHumansInfo(value))(data)
         case msg_getHospDetail(data) =>
             //queryMultiMacro(???, ???, MergeStepResult(data, pr), names, names)
-            processor (value => getCheckpointMulti(value))(data)
+            processor (value => getHospDetail(value))(data)
 
         case _ => ???
     }
 
-    def getCheckpointMulti(data: JsValue) : (Option[Map[String, JsValue]], Option[JsValue]) = {
+    def getHumansInfo(data: JsValue) : (Option[Map[String, JsValue]], Option[JsValue]) = {
 
-        val checkpoint = """
+        val humansInfo = """
          |      {
          |            "type": "checkpoint",
          |            "attribute": [
-         |                    {
-         |                        "id": "1111",
-         |                        "name": "关卡01"
-         |                    },
-         |                    {
-         |                        "id": "2222",
-         |                        "name": "关卡02"
-         |                    }
-         |              ]
+         |    {
+         |        "name": "代表一",
+         |        "total": 30,
+         |        "used": 20,
+         |        "percentage": 67
+         |    },
+         |    {
+         |        "name": "代表二",
+         |        "total": 30,
+         |        "used": 29,
+         |        "percentage": 96
+         |    },
+         |    {
+         |        "name": "代表三",
+         |        "total": 30,
+         |        "used": 20,
+         |        "percentage": 67
+         |    },
+         |    {
+         |        "name": "代表四",
+         |        "total": 30,
+         |        "used": 15,
+         |        "percentage": 50
+         |    },
+         |    {
+         |        "name": "代表五",
+         |        "total": 30,
+         |        "used": 10,
+         |        "percentage": 33
+         |    }
+         |]
          |        }
         """.stripMargin
-        val hospLst = """
+
+        val version =
+            """
+              |{
+              |     "major": 1,
+              |     "minor": 0
+              |}
+            """.stripMargin
+
+        (Some(Map(
+            "timestamp" -> toJson(1530689119000L),
+            "version" -> Json.parse(version),
+            "data" -> Json.parse(humansInfo)
+        )), None)
+    }
+
+    def getHospDetail(data: JsValue) : (Option[Map[String, JsValue]], Option[JsValue]) = {
+
+        val hospDetail = """
          |      {
          |            "type": "checkpoint",
          |            "attribute": {
-         |    "currentMonth": "2",
-         |    "hospitalList": [
+         |    "medicines": [
          |        {
-         |            "hospid": "111",
-         |            "name": "中日医院",
-         |            "level": "综合/三甲",
-         |            "department": "皮肤科",
-         |            "bed": 1000,
-         |            "outpatient": 1234545,
-         |            "surgery": 1000,
-         |            "representive": {
-         |                "name": "校长",
-         |                "avatar": "/assets/images/hosp_seller.png"
-         |            },
-         |            "medicine": [
-         |                {
-         |                    "name": "口服抗生素",
-         |                    "potential": "54,561,334",
-         |                    "previoussales": "554,687",
-         |                    "contributionrate": "5%",
-         |                    "share": "12%"
-         |                }
-         |            ]
+         |            "id": "medicine000",
+         |            "name": "口服抗生素",
+         |            "marketpotential": 333444555,
+         |            "potentialgrowth": 99,
+         |            "previoussales": 555444,
+         |            "previousgrowth": 99,
+         |            "share": 12,
+         |            "contributionrate": 4,
+         |            "detail": [ ],
+         |            "hospital": [ ],
+         |            "competitionproducts": [ ]
          |        }
          |    ]
          |}
@@ -89,7 +122,7 @@ object ScenarioModule extends ModuleTrait {
         (Some(Map(
             "timestamp" -> toJson(1530689119000L),
             "version" -> Json.parse(version),
-            "data" -> Json.parse(hospLst)
+            "data" -> Json.parse(hospDetail)
         )), None)
     }
 
