@@ -25,14 +25,13 @@ object CheckpointModule extends ModuleTrait {
         case msg_updateCheckpoint(data) => updateMacro(qc, up2m, dr, data, names, name)
         case msg_queryCheckpoint(data) => queryMacro(qc, dr, MergeStepResult(data, pr), names, name)
         case msg_queryCheckpointMulti(data) =>
-            //queryMultiMacro(???, ???, MergeStepResult(data, pr), names, names)
+//            queryMultiMacro(qc, dr, MergeStepResult(data, pr), names, names)
             processor (value => getCheckpointMulti(value))(data)
 
         case _ => ???
     }
 
     def getCheckpointMulti(data: JsValue) : (Option[Map[String, JsValue]], Option[JsValue]) = {
-
         val checkpoint = """
          |      {
          |            "type": "checkpoint",
@@ -48,38 +47,6 @@ object CheckpointModule extends ModuleTrait {
          |              ]
          |        }
         """.stripMargin
-        val hospLst = """
-         |      {
-         |            "type": "checkpoint",
-         |            "attribute": {
-         |    "currentMonth": "2",
-         |    "hospitalList": [
-         |        {
-         |            "hospid": "111",
-         |            "name": "中日医院",
-         |            "level": "综合/三甲",
-         |            "department": "皮肤科",
-         |            "bed": 1000,
-         |            "outpatient": 1234545,
-         |            "surgery": 1000,
-         |            "representive": {
-         |                "name": "校长",
-         |                "avatar": "/assets/images/hosp_seller.png"
-         |            },
-         |            "medicine": [
-         |                {
-         |                    "name": "口服抗生素",
-         |                    "potential": "54,561,334",
-         |                    "previoussales": "554,687",
-         |                    "contributionrate": "5%",
-         |                    "share": "12%"
-         |                }
-         |            ]
-         |        }
-         |    ]
-         |}
-         |        }
-        """.stripMargin
 
         val version =
             """
@@ -92,7 +59,7 @@ object CheckpointModule extends ModuleTrait {
         (Some(Map(
             "timestamp" -> toJson(1530689119000L),
             "version" -> Json.parse(version),
-            "data" -> Json.parse(hospLst)
+            "data" -> Json.parse(checkpoint)
         )), None)
     }
 

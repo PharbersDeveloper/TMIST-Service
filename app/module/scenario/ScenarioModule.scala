@@ -19,8 +19,12 @@ object ScenarioModule extends ModuleTrait {
     def dispatchMsg(msg: MessageDefines)(pr: Option[Map[String, JsValue]])
                    (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
-        case msg_getHospLst(data) => pushMacro(d2m, ssr, data, names, name)
-        case msg_getBudgetInfo(data) => popMacro(qc, popr, data, names)
+        case msg_getHospLst(data) =>
+            processor(value => getHospitalList(value))(data)
+//            pushMacro(d2m, ssr, data, names, name)
+        case msg_getBudgetInfo(data) =>
+            processor(value => getBudgetInfo(value))(data)
+//            popMacro(qc, popr, data, names)
         case msg_getHumansInfo(data) =>
             //updateMacro(qc, up2m, dr, data, names, name)
             processor (value => getHumansInfo(value))(data)
@@ -29,6 +33,80 @@ object ScenarioModule extends ModuleTrait {
             processor (value => getHospDetail(value))(data)
 
         case _ => ???
+    }
+    
+    def getHospitalList(data: JsValue): (Option[String Map JsValue], Option[JsValue]) = {
+        val hospitalList = """
+                        |      {
+                        |    "type": "checkpoint",
+                        |    "attribute": {
+                        |    "currentMonth": "2",
+                        |    "hospitalList": [
+                        |        {
+                        |            "hospid": "111",
+                        |            "name": "中日医院",
+                        |            "level": "综合/三甲",
+                        |            "department": "皮肤科",
+                        |            "bed": 1000,
+                        |            "outpatient": 1234545,
+                        |            "surgery": 1000,
+                        |            "representive": {
+                        |                "name": "校长",
+                        |                "avatar": "/assets/images/hosp_seller.png"
+                        |            },
+                        |            "medicine": [
+                        |                {
+                        |                    "name": "口服抗生素",
+                        |                    "potential": "54,561,334",
+                        |                    "previoussales": "554,687",
+                        |                    "contributionrate": "5%",
+                        |                    "share": "12%"
+                        |                }
+                        |            ]
+                        |        }
+                        |    ]
+                        |}
+                        |        }
+                      """.stripMargin
+        val version =
+            """
+              |{
+              |     "major": 1,
+              |     "minor": 0
+              |}
+            """.stripMargin
+    
+        (Some(Map(
+            "timestamp" -> toJson(1530689119000L),
+            "version" -> Json.parse(version),
+            "data" -> Json.parse(hospitalList)
+        )), None)
+    }
+    
+    def getBudgetInfo(data: JsValue): (Option[String Map JsValue], Option[JsValue]) = {
+        val budgetInfo =
+			"""
+              |{
+              |    "type": "checkpoint",
+              |    "attribute": {
+              |        "total": 800000,
+              |        "used": 60000,
+              |        "percentage": 75
+              |    }
+              |}
+			""".stripMargin
+        val version =
+            """
+              |{
+              |     "major": 1,
+              |     "minor": 0
+              |}
+            """.stripMargin
+        (Some(Map(
+            "timestamp" -> toJson(1530689119000L),
+            "version" -> Json.parse(version),
+            "data" -> Json.parse(budgetInfo)
+        )), None)
     }
 
     def getHumansInfo(data: JsValue) : (Option[Map[String, JsValue]], Option[JsValue]) = {

@@ -17,14 +17,18 @@ class ScenarioController @Inject()(implicit as_inject: ActorSystem, dbt: dbInsta
 	import com.pharbers.bmpattern.LogMessage.common_log
 	import com.pharbers.bmpattern.ResultMessage.common_result
 
-	def getHospLst() = Action {
-		Ok(views.html.index())
+	def getHospLst() = Action { request =>
+		requestArgsQuery().requestArgs(request) { jv =>
+			MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
+				:: msg_getHospLst(jv)
+				:: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+		}
 	}
 
 	def getBudgetInfo() = Action { request =>
 		requestArgsQuery().requestArgs(request) { jv =>
 			MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
-				
+				:: msg_getBudgetInfo(jv)
 				:: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
 		}
 	}
