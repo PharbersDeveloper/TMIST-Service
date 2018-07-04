@@ -8,8 +8,8 @@ import com.pharbers.token.AuthTokenTrait
 class TMISTModules extends Module{
 	override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
 		Seq(
-			bind[dbInstanceManager].to[DBManagerModule],
-			bind[AuthTokenTrait].to[TokenInjectModule]
+			bind[dbInstanceManager].to[DBManagerModule]
+//			,bind[AuthTokenTrait].to[TokenInjectModule]
 		)
 	}
 }

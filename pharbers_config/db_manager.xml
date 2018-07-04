@@ -1,5 +1,5 @@
 <pharbers-modules>
     <mongodb-connect-nodes>
-        <connect-config-path name="tm" value="pharbers_config/tm_connect.xml" />
+        <connect-config-path name="client" value="pharbers_config/db_client_connect.xml" />
     </mongodb-connect-nodes>
 </pharbers-modules>

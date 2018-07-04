@@ -7,6 +7,6 @@ import com.pharbers.token.tokenImpl.TokenImplTrait
 @Singleton
 class DBManagerModule extends dbInstanceManager
 
-@Singleton
-class TokenInjectModule extends TokenImplTrait
+//@Singleton
+//class TokenInjectModule extends TokenImplTrait
 
