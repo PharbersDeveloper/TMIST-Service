@@ -1,4 +1,4 @@
-package module.roles
+package module.company
 
 import module.users.user
 import com.mongodb.casbah
@@ -10,10 +10,10 @@ import module.common.stragety.{bind, impl, one2many}
 import com.mongodb.casbah.Imports.{$or, DBObject, MongoDBObject, _}
 
 /**
-  * Created by clock on 18-7-6.
+  * Created by clock on 18-7-5.
   */
-class role2user extends one2many[role, user] with bind[role, user] {
-    override def createThis: role = impl[role]
+class company2user extends one2many[company, user] with bind[company, user] {
+    override def createThis: company = impl[company]
     override def createThat: user = impl[user]
 
     override def one2manyssr(obj: Imports.DBObject): Map[String, JsValue] =
@@ -27,7 +27,7 @@ class role2user extends one2many[role, user] with bind[role, user] {
             "condition" -> toJson(Map(
                 "bind_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
                 "user_id" -> toJson(obj.getAs[String]("user_id").get),
-                "role_id" -> toJson(obj.getAs[String]("role_id").get)
+                "company_id" -> toJson(obj.getAs[String]("company_id").get)
             ))
         )
 
@@ -35,7 +35,7 @@ class role2user extends one2many[role, user] with bind[role, user] {
         val builder = MongoDBObject.newBuilder
         builder += "_id" -> ObjectId.get()
         builder += "user_id" -> (data \ "user" \ "user_id").asOpt[String].get
-        builder += "role_id" -> (data \ "role" \ "role_id").asOpt[String].get
+        builder += "company_id" -> (data \ "company" \ "company_id").asOpt[String].get
 
         builder.result
     }

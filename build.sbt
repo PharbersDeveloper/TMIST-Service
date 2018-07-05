@@ -4,6 +4,8 @@ def common = Seq(
 	organization := "com.pharbers"
 )
 
+PlayKeys.devSettings := Seq("play.server.http.port" -> "7272")
+
 lazy val root = (project in file(".")).
 	enablePlugins(PlayScala)
 	.disablePlugins(PlayFilters)
