@@ -38,7 +38,7 @@ object ScenarioModule extends ModuleTrait {
     def getHospitalList(data: JsValue): (Option[String Map JsValue], Option[JsValue]) = {
         val hospitalList = """
                         |      {
-                        |    "type": "checkpoint",
+                        |    "type": "hosp_lst",
                         |    "attribute": {
                         |    "currentMonth": "2",
                         |    "hospitalList": [
@@ -87,7 +87,7 @@ object ScenarioModule extends ModuleTrait {
         val budgetInfo =
 			"""
               |{
-              |    "type": "checkpoint",
+              |    "type": "budget_progress",
               |    "attribute": {
               |        "total": 800000,
               |        "used": 60000,
@@ -113,7 +113,7 @@ object ScenarioModule extends ModuleTrait {
 
         val humansInfo = """
          |      {
-         |            "type": "checkpoint",
+         |            "type": "humans_progress",
          |            "attribute": [
          |    {
          |        "name": "代表一",
@@ -168,7 +168,7 @@ object ScenarioModule extends ModuleTrait {
 
         val hospDetail = """
          |      {
-         |            "type": "checkpoint",
+         |            "type": "hosp_detail",
          |            "attribute": {
          |    "medicines": [
          |        {

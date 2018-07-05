@@ -34,7 +34,7 @@ object CheckpointModule extends ModuleTrait {
     def getCheckpointMulti(data: JsValue) : (Option[Map[String, JsValue]], Option[JsValue]) = {
         val checkpoint = """
          |      {
-         |            "type": "checkpoint",
+         |            "type": "checkpoints",
          |            "attribute": [
          |                    {
          |                        "id": "1111",
