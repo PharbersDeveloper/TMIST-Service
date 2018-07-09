@@ -12,7 +12,7 @@ import com.mongodb.casbah.Imports.{$or, DBObject, MongoDBObject, _}
 /**
   * Created by clock on 18-7-6.
   */
-class proposals2user extends one2many[proposal, user] with bind[proposal, user] {
+class proposal2user extends one2many[proposal, user] with bind[proposal, user] {
     override def createThis: proposal = impl[proposal]
     override def createThat: user = impl[user]
 

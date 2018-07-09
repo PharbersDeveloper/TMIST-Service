@@ -8,10 +8,16 @@ import play.api.libs.json.JsValue
   */
 abstract class msg_ProposalCommand extends CommonMessage("proposal", ProposalModule)
 
-object CheckpointMessage {
-    case class msg_pushCheckpoint(data: JsValue) extends msg_ProposalCommand
-    case class msg_popCheckpoint(data : JsValue) extends msg_ProposalCommand
-    case class msg_updateCheckpoint(data : JsValue) extends msg_ProposalCommand
-    case class msg_queryCheckpoint(data : JsValue) extends msg_ProposalCommand
+object ProposalMessage {
+    case class msg_pushProposal(data: JsValue) extends msg_ProposalCommand
+    case class msg_popProposal(data : JsValue) extends msg_ProposalCommand
+    case class msg_updateProposal(data : JsValue) extends msg_ProposalCommand
+    case class msg_queryProposal(data : JsValue) extends msg_ProposalCommand
     case class msg_farmatProposalName(data : JsValue) extends msg_ProposalCommand
+
+
+    case class msg_getHospLst(data: JsValue) extends msg_ProposalCommand
+    case class msg_getBudgetInfo(data : JsValue) extends msg_ProposalCommand
+    case class msg_getHumansInfo(data : JsValue) extends msg_ProposalCommand
+    case class msg_getHospDetail(data : JsValue) extends msg_ProposalCommand
 }
