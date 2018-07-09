@@ -30,6 +30,8 @@ object UserAuthModule extends ModuleTrait {
             processor(value => returnValue(authWithPassword(authPwd, sr)(value)(names), name))(data)
         case msg_authSetExpire(data) =>
             processor(value => returnValue(authSetExpire(value)))(MergeStepResult(data, pr))
+        case msg_authParseToken(data) =>
+            processor(value => returnValue(authParseToken(value)))(data)
 
         case _ => ???
     }

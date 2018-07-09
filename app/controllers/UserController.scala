@@ -11,9 +11,9 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 import com.pharbers.dbManagerTrait.dbInstanceManager
 import com.pharbers.bmmessages.{CommonModules, MessageRoutes}
 import com.pharbers.bmpattern.ResultMessage.msg_CommonResultMessage
-import module.roles.RoleMessage._
 
-class UserController @Inject()(implicit cc: ControllerComponents, as_inject: ActorSystem, dbt: dbInstanceManager, rd: PhRedisDriverImpl)
+class UserController @Inject()(implicit cc: ControllerComponents, as_inject: ActorSystem,
+                               dbt: dbInstanceManager, rd: PhRedisDriverImpl)
         extends AbstractController(cc) {
 
     import com.pharbers.bmpattern.LogMessage.common_log

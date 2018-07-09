@@ -59,4 +59,24 @@ trait authTrait {
         )
     }
 
+    def authParseToken(data: JsValue)
+                     (implicit cm: CommonModules): Map[String, JsValue] = {
+
+        val rd = cm.modules.get.get("rd").map(x => x.asInstanceOf[PhRedisDriverImpl]).getOrElse(throw new Exception("no redis connection"))
+        val token = (data \ "token").asOpt[String].get
+//        val uid = (data \ "user" \ "user_id").asOpt[String].map(x => x).get
+//        val accessToken = "bearer" + Sercurity.md5Hash(uid + new Date().getTime)
+
+        TempLog.phTempLog(s"token = $token")
+//        (data \ "user").asOpt[Map[String, JsValue]].get
+//                .foreach { x =>
+//                    rd.addMap(accessToken, x._1, x._2.asOpt[String].getOrElse(x._2.toString))
+//                }
+//        rd.expire(accessToken, expire)
+
+        Map(
+            "user_token" -> toJson(token)
+        )
+    }
+
 }

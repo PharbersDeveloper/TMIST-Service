@@ -36,9 +36,15 @@ POST    /api/checkpoint/update          controllers.CheckpointController.updateC
 POST    /api/checkpoint/query           controllers.CheckpointController.queryCheckpoint()
 POST    /api/checkpoint/query/multi     controllers.CheckpointController.queryMultiCheckpoint()
 
-# 关卡内信息
+# 关卡内场景信息
 POST    /api/scenario/hospital/lst      controllers.ScenarioController.getHospLst()
 POST    /api/scenario/budget/info       controllers.ScenarioController.getBudgetInfo()
 POST    /api/scenario/humans/info       controllers.ScenarioController.getHumansInfo()
 POST    /api/scenario/hospital/detail   controllers.ScenarioController.getHospDetail()
 
+# 生成报告信息
+POST    /api/report/total               controllers.ReportController.getTotalReport()
+POST    /api/report/hosp_product        controllers.ReportController.getHospProdReport()
+POST    /api/report/repr_product        controllers.ReportController.getRepProdReport()
+POST    /api/report/resource_in_out     controllers.ReportController.getResourceIO()
+POST    /api/report/repr_ind_resource   controllers.ReportController.getRepIndResources()

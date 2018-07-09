@@ -33,5 +33,6 @@ object UserMessage {
     case class msg_userRolesInfo(data : JsValue) extends msg_UserAuthCommand
     case class msg_authWithPassword(data: JsValue) extends msg_UserAuthCommand
     case class msg_authSetExpire(data: JsValue) extends msg_UserAuthCommand
+    case class msg_authParseToken(data: JsValue) extends msg_UserAuthCommand
 
 }
