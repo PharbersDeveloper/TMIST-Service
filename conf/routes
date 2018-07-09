@@ -37,14 +37,14 @@ POST    /api/proposal/query             controllers.ProposalController.queryProp
 POST    /api/proposal/lst               controllers.ProposalController.queryProposalLst()
 
 # 关卡内场景信息
-POST    /api/scenario/hospital/lst      controllers.ScenarioController.getHospLst()
-POST    /api/scenario/budget/info       controllers.ScenarioController.getBudgetInfo()
-POST    /api/scenario/humans/info       controllers.ScenarioController.getHumansInfo()
-POST    /api/scenario/hospital/detail   controllers.ScenarioController.getHospDetail()
+POST    /api/proposal/hospital/lst      controllers.ProposalController.queryHospLst()
+POST    /api/proposal/budget/info       controllers.ProposalController.queryBudgetInfo()
+POST    /api/proposal/humans/info       controllers.ProposalController.getHumansInfo()
+POST    /api/proposal/hospital/detail   controllers.ProposalController.getHospDetail()
 
 # 生成报告信息
-POST    /api/report/total               controllers.ReportController.getTotalReport()
-POST    /api/report/hosp_product        controllers.ReportController.getHospProdReport()
-POST    /api/report/repr_product        controllers.ReportController.getRepProdReport()
-POST    /api/report/resource_in_out     controllers.ReportController.getResourceIO()
-POST    /api/report/repr_ind_resource   controllers.ReportController.getRepIndResources()
+POST    /api/proposal/report/total               controllers.ProposalController.getTotalReport()
+POST    /api/proposal/report/hosp_product        controllers.ProposalController.getHospProdReport()
+POST    /api/proposal/report/repr_product        controllers.ProposalController.getRepProdReport()
+POST    /api/proposal/report/resource_in_out     controllers.ProposalController.getResourceIO()
+POST    /api/proposal/report/repr_ind_resource   controllers.ProposalController.getRepIndResources()

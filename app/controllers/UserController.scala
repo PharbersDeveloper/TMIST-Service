@@ -31,21 +31,21 @@ class UserController @Inject()(implicit cc: ControllerComponents, as_inject: Act
 //                :: msg_bindUserCompany(jv)
 //                :: msg_registerUserForEm(jv)
 //                :: msg_userJoinChatgroupForEm(jv)
-                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 
     def popUser = Action(request => requestArgsQuery().requestArgs(request) { jv =>
         MessageRoutes(msg_log(toJson(Map("method" -> toJson("pop user"))), jv)
                 :: msg_popUser(jv)
                 :: msg_JsonapiAdapter(jv)
-                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 
     def queryUserMulti = Action(request => requestArgsQuery().requestArgs(request) { jv =>
         MessageRoutes(msg_log(toJson(Map("method" -> toJson("query user multi"))), jv)
                 :: msg_queryUserMulti(jv)
                 :: msg_JsonapiAdapter(jv)
-                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 
     def userCompany = Action(request => requestArgsQuery().requestArgs(request) { jv =>
@@ -53,7 +53,7 @@ class UserController @Inject()(implicit cc: ControllerComponents, as_inject: Act
                 :: msg_queryUser(jv)
                 :: msg_userCompanyInfo(jv)
                 :: msg_JsonapiAdapter(jv)
-                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 
     def userRoles = Action(request => requestArgsQuery().requestArgs(request) { jv =>
@@ -61,7 +61,7 @@ class UserController @Inject()(implicit cc: ControllerComponents, as_inject: Act
                 :: msg_queryUser(jv)
                 :: msg_userRolesInfo(jv)
                 :: msg_JsonapiAdapter(jv)
-                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 
     def userDetail = Action(request => requestArgsQuery().requestArgs(request) { jv =>
@@ -70,7 +70,7 @@ class UserController @Inject()(implicit cc: ControllerComponents, as_inject: Act
                 :: msg_userRolesInfo(jv)
                 :: msg_userCompanyInfo(jv)
                 :: msg_JsonapiAdapter(jv)
-                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 
     def userLogin = Action(request => requestArgsQuery().requestArgs(request) { jv =>

@@ -1,43 +1,29 @@
-package module.proposals
+package module.proposals.scenarios
 
-import module.roles.role
-import module.common.processor
-import module.common.processor._
+import module.users.user
+import module.common.stragety.impl
 import play.api.libs.json.Json.toJson
 import module.proposals.ProposalMessage._
-import play.api.libs.json.{JsValue, Json}
 import com.pharbers.bmpattern.ModuleTrait
-import com.pharbers.pharbersmacro.CURDMacro._
+import play.api.libs.json.{JsValue, Json}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
 
 object ScenarioModule extends ModuleTrait {
-    val role = new role()
-
-    import role._
-
-    val name = "checkppoint"
-    val names = "checkppoints"
+    val u: user = impl[user]
+    val p: proposal = impl[proposal]
+    val p2u: proposal2user = impl[proposal2user]
 
     def dispatchMsg(msg: MessageDefines)(pr: Option[Map[String, JsValue]])
                    (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
-        case msg_getHospLst(data) =>
-            processor(value => getHospitalList(value))(data)
-        //            pushMacro(d2m, ssr, data, names, name)
-        case msg_getBudgetInfo(data) =>
-            processor(value => getBudgetInfo(value))(data)
-        //            popMacro(qc, popr, data, names)
-        case msg_getHumansInfo(data) =>
-            //updateMacro(qc, up2m, dr, data, names, name)
-            processor(value => getHumansInfo(value))(data)
-        case msg_getHospDetail(data) =>
-            //queryMultiMacro(???, ???, MergeStepResult(data, pr), names, names)
-            processor(value => getHospDetail(value))(data)
+        case msg_queryScenarioByProposal(data) => ???
+        case msg_queryHospByScenario(data) => ???
 
         case _ => ???
     }
 
     def getHospitalList(data: JsValue): (Option[String Map JsValue], Option[JsValue]) = {
+
         val hospitalList =
             """
               |      {
@@ -116,17 +102,8 @@ object ScenarioModule extends ModuleTrait {
               |}
               |        }
             """.stripMargin
-        val version =
-            """
-              |{
-              |     "major": 1,
-              |     "minor": 0
-              |}
-            """.stripMargin
 
         (Some(Map(
-            "timestamp" -> toJson(1530689119000L),
-            "version" -> Json.parse(version),
             "data" -> Json.parse(hospitalList)
         )), None)
     }

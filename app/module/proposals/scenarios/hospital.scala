@@ -1,18 +1,18 @@
-package module.proposals
+package module.proposals.scenarios
 
+import com.mongodb.casbah.Imports._
+import module.common.datamodel.basemodel
 import org.bson.types.ObjectId
 import play.api.libs.json.JsValue
-import com.mongodb.casbah.Imports._
 import play.api.libs.json.Json.toJson
-import module.common.datamodel.basemodel
 
 /**
   * Created by clock on 18-7-9.
   */
-class proposal extends basemodel {
+class hospital extends basemodel {
 
-    override val name = "proposal"
-    override def runtimeClass: Class[_] = classOf[proposal]
+    override val name = "hospital"
+    override def runtimeClass: Class[_] = classOf[hospital]
 
     override val qc : JsValue => DBObject = { js =>
         val tmp = (js \ "data" \ "condition" \ "proposal_id").asOpt[String].get
@@ -24,7 +24,12 @@ class proposal extends basemodel {
         DBObject("proposal_id" -> tmp)
     }
 
-    override val qcm : JsValue => DBObject = js => DBObject()
+    override val qcm : JsValue => DBObject = { js =>
+        (js \ "proposal" \ "proposals").asOpt[List[String]].get match {
+            case Nil => DBObject("query" -> "none")
+            case ll : List[String] => $or(ll map (x => DBObject("proposal_name" -> x)))
+        }
+    }
 
     override val ssr : DBObject => Map[String, JsValue] = { obj =>
         Map(

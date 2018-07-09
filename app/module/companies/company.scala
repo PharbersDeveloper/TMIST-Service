@@ -1,4 +1,4 @@
-package module.company
+package module.companies
 
 import org.bson.types.ObjectId
 import play.api.libs.json.JsValue

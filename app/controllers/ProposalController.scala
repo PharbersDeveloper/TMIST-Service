@@ -28,7 +28,7 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
                     :: msg_authParseToken(jv)
                     :: msg_pushProposal(jv)
                     :: msg_JsonapiAdapter(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
@@ -38,7 +38,7 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
                     :: msg_authParseToken(jv)
                     :: msg_popProposal(jv)
                     :: msg_JsonapiAdapter(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
@@ -48,7 +48,7 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
                     :: msg_authParseToken(jv)
                     :: msg_updateProposal(jv)
                     :: msg_JsonapiAdapter(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
@@ -58,7 +58,7 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
                     :: msg_authParseToken(jv)
                     :: msg_queryProposal(jv)
                     :: msg_JsonapiAdapter(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt))))
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
@@ -69,6 +69,81 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
                     :: msg_userProposalInfo(jv)
                     :: msg_farmatProposalName(jv)
                     :: msg_JsonapiAdapter(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def queryHospLst() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp lst in proposal"))), jv)
+                    :: msg_authParseToken(jv)
+                    :: msg_queryScenarioByProposal(jv)
+                    :: msg_queryHospByScenario(jv)
+                    :: msg_JsonapiAdapter(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def queryBudgetInfo() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
+                    :: msg_getBudgetInfo(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getHumansInfo() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get humans info"))), jv)
+                    :: msg_getHumansInfo(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getHospDetail() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
+                    :: msg_getHospDetail(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getTotalReport() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
+                    :: msg_getTotalReport(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getHospProdReport() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
+                    :: msg_getHospProdReport(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getRepProdReport() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get humans info"))), jv)
+                    :: msg_getRepProdReport(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getResourceIO() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
+                    :: msg_getResourceIO(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def getRepIndResources() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
+                    :: msg_getRepIndResources(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }

@@ -1,12 +1,12 @@
-package module.report
+package module.proposals.reports
 
 import module.roles.role
 import module.common.processor
 import play.api.libs.json.Json.toJson
-import module.report.ReportMessage._
 import com.pharbers.bmpattern.ModuleTrait
 import play.api.libs.json.{JsValue, Json}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
+import module.proposals.ProposalMessage._
 
 object ReportModule extends ModuleTrait {
     val role = new role()

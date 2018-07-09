@@ -1,9 +1,9 @@
-package module.company
+package module.companies
 
 import module.common.processor._
 import play.api.libs.json.JsValue
 import module.common.stragety.impl
-import module.company.CompanyMessage._
+import module.companies.CompanyMessage._
 import com.pharbers.bmpattern.ModuleTrait
 import com.pharbers.pharbersmacro.CURDMacro._
 import module.common.{MergeStepResult, processor}
