@@ -7,7 +7,7 @@ import com.pharbers.bmpattern.ResultMessage.msg_CommonResultMessage
 import com.pharbers.dbManagerTrait.dbInstanceManager
 import controllers.common.requestArgsQuery
 import javax.inject.Inject
-import module.scenario.CheckpointMessage._
+import module.proposals.ProposalMessage._
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
 

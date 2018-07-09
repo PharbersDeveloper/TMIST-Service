@@ -1,10 +1,10 @@
-package module.scenario
+package module.proposals
 
 import module.roles.role
 import module.common.processor
 import module.common.processor._
 import play.api.libs.json.Json.toJson
-import module.scenario.CheckpointMessage._
+import module.proposals.ProposalMessage._
 import play.api.libs.json.{JsValue, Json}
 import com.pharbers.bmpattern.ModuleTrait
 import com.pharbers.pharbersmacro.CURDMacro._

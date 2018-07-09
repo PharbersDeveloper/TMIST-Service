@@ -14,7 +14,7 @@ import com.mongodb.casbah.Imports.{DBObject, MongoDBObject}
 import module.users.user
 
 /**
-  * Created by spark on 18-7-5.
+  * Created by spark on 18-4-19.
   */
 class user2company extends one2one[user, company] with bind[user, company] {
     override def createThis: user = impl[user]
