@@ -17,10 +17,15 @@ object ProposalMessage {
     case class msg_updateProposal(data : JsValue) extends msg_ProposalCommand
     case class msg_queryProposal(data : JsValue) extends msg_ProposalCommand
     case class msg_queryUsersByProposal(data : JsValue) extends msg_ProposalCommand
-    case class msg_farmatProposalName(data : JsValue) extends msg_ProposalCommand
+    case class msg_formatProposalName(data : JsValue) extends msg_ProposalCommand
 
-    case class msg_queryScenarioByProposal(data: JsValue) extends msg_ScenarioCommand
-    case class msg_queryHospByScenario(data: JsValue) extends msg_ScenarioCommand
+    // 根据建议Proposal获得第一个场景Scenarios, 之后用第一个Scenarios查询医院Hosp, 最后用Hosp查询代表和产品
+    case class msg_queryScenariosByProposal(data: JsValue) extends msg_ScenarioCommand
+    case class msg_getFirstScenario(data: JsValue) extends msg_ScenarioCommand
+    case class msg_queryHospsByScenario(data: JsValue) extends msg_ScenarioCommand
+    case class msg_queryRepsByHosp(data: JsValue) extends msg_ScenarioCommand
+    case class msg_queryProdsByHosp(data: JsValue) extends msg_ScenarioCommand
+
     case class msg_getBudgetInfo(data : JsValue) extends msg_ScenarioCommand
     case class msg_getHumansInfo(data : JsValue) extends msg_ScenarioCommand
     case class msg_getHospDetail(data : JsValue) extends msg_ScenarioCommand

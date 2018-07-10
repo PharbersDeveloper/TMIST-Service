@@ -1,23 +1,47 @@
 package module.proposals.scenarios
 
-import module.users.user
+import module.common.processor._
+import module.proposals.{proposal, proposal2scenario}
 import module.common.stragety.impl
 import play.api.libs.json.Json.toJson
 import module.proposals.ProposalMessage._
 import com.pharbers.bmpattern.ModuleTrait
 import play.api.libs.json.{JsValue, Json}
+import module.common.processor.returnValue
+import module.common.{MergeStepResult, processor}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
+import module.proposals.scenarios.products.{hospital2product, product}
+import module.proposals.scenarios.hospitals.{hospital, scenario2hospital}
+import module.proposals.scenarios.representative.{hospital2representative, representative}
 
 object ScenarioModule extends ModuleTrait {
-    val u: user = impl[user]
     val p: proposal = impl[proposal]
-    val p2u: proposal2user = impl[proposal2user]
+    val s: scenario = impl[scenario]
+    val h: hospital = impl[hospital]
+    val r: representative = impl[representative]
+    val prod: product = impl[product]
+    val ps: proposal2scenario = impl[proposal2scenario]
+    val sh: scenario2hospital = impl[scenario2hospital]
+    val hr: hospital2representative = impl[hospital2representative]
+    val hp: hospital2product = impl[hospital2product]
 
     def dispatchMsg(msg: MessageDefines)(pr: Option[Map[String, JsValue]])
                    (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
-        case msg_queryScenarioByProposal(data) => ???
-        case msg_queryHospByScenario(data) => ???
+        case msg_queryScenariosByProposal(data) =>
+            processor(value => returnValue(ps.queryConnection(value)(pr)(s.sr)("bind_proposal_scenario")))(MergeStepResult(data, pr))
+        case msg_getFirstScenario(data) =>
+            processor (_ => (Some(Map(s.name -> pr.get(p.name).asOpt[Map[String, JsValue]].get(s.names).asOpt[List[JsValue]].get.head)), None))(data)
+        case msg_queryHospsByScenario(data) =>
+            processor(value => returnValue{
+                val a = sh.queryConnection(value)(pr)(h.sr)("scenario_hospital")
+                println(a)
+                Map("hospital" -> a("scenario").asOpt[Map[String, JsValue]].get("hospitals").as[List[JsValue]].head)
+            })(MergeStepResult(data, pr))
+        case msg_queryRepsByHosp(data) =>
+            processor(value => returnValue(hr.queryConnection(value)(pr)(r.sr)("scenario_hospital_representative")))(MergeStepResult(data, pr))
+        case msg_queryProdsByHosp(data) =>
+            processor(value => returnValue(hp.queryConnection(value)(pr)(prod.sr)("scenario_hospital_product")))(MergeStepResult(data, pr))
 
         case _ => ???
     }

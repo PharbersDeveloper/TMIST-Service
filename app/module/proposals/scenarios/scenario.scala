@@ -24,7 +24,7 @@ class scenario extends basemodel {
         DBObject("scenario_id" -> tmp)
     }
 
-    override val qcm : JsValue => DBObject = js => DBObject()
+    override val qcm : JsValue => DBObject = _ => DBObject()
 
     override val ssr : DBObject => Map[String, JsValue] = { obj =>
         Map(
@@ -34,14 +34,15 @@ class scenario extends basemodel {
 
     override val sr : DBObject => Map[String, JsValue] = { obj =>
         Map(
-            "current_month" -> toJson(obj.getAs[String]("current_month").get)
+            "scenario_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
+            "current_month" -> toJson(obj.getAs[Int]("current_month").get)
         )
     }
 
     override val dr : DBObject => Map[String, JsValue] = { obj =>
         Map(
             "scenario_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
-            "current_month" -> toJson(obj.getAs[String]("current_month").get)
+            "current_month" -> toJson(obj.getAs[Int]("current_month").get)
         )
     }
 
@@ -56,7 +57,7 @@ class scenario extends basemodel {
 
         val builder = MongoDBObject.newBuilder
         builder += "_id" -> ObjectId.get()      // scenario_id 唯一标示
-        builder += "current_month" -> (data \ "current_month").asOpt[String].map (x => x).getOrElse("")
+        builder += "current_month" -> (data \ "current_month").asOpt[Int].map (x => x).getOrElse("")
 
         builder.result
     }
@@ -64,7 +65,7 @@ class scenario extends basemodel {
     override val up2m : (DBObject, JsValue) => DBObject = { (obj, js) =>
         val data = (js \ "data" \ "scenario").asOpt[JsValue].get
 
-        (data \ "current_month").asOpt[String].map (x => obj += "current_month" -> x).getOrElse(Unit)
+        (data \ "current_month").asOpt[Int].map (x => obj += "current_month" -> int2Integer(x)).getOrElse(Unit)
 
         obj
     }
