@@ -1,12 +1,14 @@
 package com.pharbers.module
 
 import javax.inject.Singleton
+import com.pharbers.driver.PhRedisDriverImpl
+import com.pharbers.driver.util.redis_conn_cache
 import com.pharbers.dbManagerTrait.dbInstanceManager
-import com.pharbers.token.tokenImpl.TokenImplTrait
 
 @Singleton
 class DBManagerModule extends dbInstanceManager
 
-//@Singleton
-//class TokenInjectModule extends TokenImplTrait
+@Singleton
+class MAXRedisManager extends redis_conn_cache with PhRedisDriverImpl
+
 

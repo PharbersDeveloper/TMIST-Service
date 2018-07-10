@@ -37,12 +37,6 @@ trait checkBindExist extends checkExistTrait {
         pr.get ++ obj
     }
 
-
-    /**
-      * 验证绑定关系的条件
-      */
-    val cbe: JsValue => DBObject = jv => DBObject()
-
     def checkBind(data: JsValue, pr: Option[Map[String, JsValue]], exMsg: String)
                   (func: JsValue => DBObject,
                    func_out: DBObject => Map[String, JsValue],

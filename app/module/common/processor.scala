@@ -11,7 +11,9 @@ object processor extends crud {
         try {
             func(data)
         } catch {
-            case ex : Exception => println(s"$name error=${ex.getMessage}"); (None, Some(errorToJson(ex.getMessage)))
+            case ex : Exception =>
+                println(s"$name error=${ex.getMessage}")
+                (None, Some(errorToJson(ex.getMessage)))
         }
 
     def returnValue(data : Map[String, JsValue], outter : String = "") : (Option[Map[String, JsValue]], Option[JsValue]) = outter match {

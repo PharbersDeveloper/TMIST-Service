@@ -1,19 +1,19 @@
-package module.roles
+package module.proposals.scenarios
 
-import module.users.user
 import com.mongodb.casbah
-import org.bson.types.ObjectId
 import com.mongodb.casbah.Imports
+import com.mongodb.casbah.Imports.{$or, DBObject, MongoDBObject, _}
+import module.common.stragety.{bind, impl, one2many}
+import module.users.user
+import org.bson.types.ObjectId
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
-import module.common.stragety.{bind, impl, one2many}
-import com.mongodb.casbah.Imports.{$or, DBObject, MongoDBObject, _}
 
 /**
   * Created by clock on 18-7-6.
   */
-class role2user extends one2many[role, user] with bind[role, user] {
-    override def createThis: role = impl[role]
+class hospital2scenario extends one2many[proposal, user] with bind[proposal, user] {
+    override def createThis: proposal = impl[proposal]
     override def createThat: user = impl[user]
 
     override def one2manyssr(obj: Imports.DBObject): Map[String, JsValue] =
@@ -27,7 +27,7 @@ class role2user extends one2many[role, user] with bind[role, user] {
             "condition" -> toJson(Map(
                 "bind_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
                 "user_id" -> toJson(obj.getAs[String]("user_id").get),
-                "role_id" -> toJson(obj.getAs[String]("role_id").get)
+                "proposal_id" -> toJson(obj.getAs[String]("proposal_id").get)
             ))
         )
 
@@ -35,7 +35,7 @@ class role2user extends one2many[role, user] with bind[role, user] {
         val builder = MongoDBObject.newBuilder
         builder += "_id" -> ObjectId.get()
         builder += "user_id" -> (data \ "user" \ "user_id").asOpt[String].get
-        builder += "role_id" -> (data \ "role" \ "role_id").asOpt[String].get
+        builder += "proposal_id" -> (data \ "proposal" \ "proposal_id").asOpt[String].get
 
         builder.result
     }
