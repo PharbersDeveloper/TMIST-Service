@@ -67,34 +67,41 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query multi proposal"))), jv)
                     :: msg_authParseToken(jv)
                     :: msg_userProposalInfo(jv)
-                    :: msg_farmatProposalName(jv)
+                    :: msg_formatProposalName(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
+    // TODO 未完成
     def queryHospLst() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp lst in proposal"))), jv)
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("query hosp lst in proposal"))), jv)
                     :: msg_authParseToken(jv)
-                    :: msg_queryScenarioByProposal(jv)
-                    :: msg_queryHospByScenario(jv)
+                    :: msg_queryProposal(jv)
+                    :: msg_queryScenariosByProposal(jv)
+                    :: msg_getFirstScenario(jv)
+                    :: msg_queryHospsByScenario(jv)
+                    :: msg_queryRepsByHosp(jv)
+                    :: msg_queryProdsByHosp(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
+    // TODO 未完成
     def queryBudgetInfo() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("query budget info in proposal"))), jv)
                     :: msg_getBudgetInfo(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
-    def getHumansInfo() = Action { request =>
+    // TODO 未完成
+    def queryHumansInfo() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get humans info"))), jv)
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("query humans info in proposal"))), jv)
                     :: msg_getHumansInfo(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }

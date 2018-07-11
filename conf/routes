@@ -39,7 +39,7 @@ POST    /api/proposal/lst               controllers.ProposalController.queryProp
 # 关卡内场景信息
 POST    /api/proposal/hospital/lst      controllers.ProposalController.queryHospLst()
 POST    /api/proposal/budget/info       controllers.ProposalController.queryBudgetInfo()
-POST    /api/proposal/humans/info       controllers.ProposalController.getHumansInfo()
+POST    /api/proposal/humans/info       controllers.ProposalController.queryHumansInfo()
 POST    /api/proposal/hospital/detail   controllers.ProposalController.getHospDetail()
 
 # 生成报告信息
