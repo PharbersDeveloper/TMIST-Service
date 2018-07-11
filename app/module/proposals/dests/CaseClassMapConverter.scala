@@ -12,6 +12,7 @@ object CaseClassMapConverter {
     implicit def Materializer[C]: CaseClassMapConverter[C] = macro converterMacro[C]
     def converterMacro[C: c.WeakTypeTag](c: whitebox.Context): c.Tree = {
         import c.universe._
+        import play.api.libs.json.{JsString, JsNumber, JsValue}
 
         val tpe = weakTypeOf[C]
         val fields = tpe.decls.collectFirst {
@@ -24,7 +25,16 @@ object CaseClassMapConverter {
             val decoded = name.decodedName.toString
             val rtype = tpe.decl(name).typeSignature
 
-            (q"$decoded -> t.$name", q"map($decoded).asInstanceOf[$rtype]")
+            val m2 = q"map($decoded)" match {
+                case q"$a: JsNumber" =>
+                    println("rtype" + a)
+                    q"map($decoded).asInstanceOf[JsString].value"
+//                case q"Int" => q"map($decoded).asInstanceOf[JsNumber].value"
+            }
+//            val m = q"map($decoded).asInstanceOf[JsString].value"
+
+
+            (q"$decoded -> t.$name", m2)
 
         }.unzip
 
