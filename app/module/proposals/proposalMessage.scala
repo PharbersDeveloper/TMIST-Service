@@ -22,7 +22,6 @@ object ProposalMessage {
     // 根据建议Proposal获得第一个场景Scenarios, 之后用第一个Scenarios查询医院Hosp, 最后用Hosp查询代表和产品
     case class msg_queryScenariosByProposal(data: JsValue) extends msg_ScenarioCommand
     case class msg_getFirstScenario(data: JsValue) extends msg_ScenarioCommand
-    case class msg_queryHospsByScenario(data: JsValue) extends msg_ScenarioCommand
     case class msg_queryRepsByHosp(data: JsValue) extends msg_ScenarioCommand
     case class msg_queryProdsByHosp(data: JsValue) extends msg_ScenarioCommand
 

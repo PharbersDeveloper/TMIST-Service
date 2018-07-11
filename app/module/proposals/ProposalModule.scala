@@ -11,7 +11,6 @@ import play.api.libs.json.{JsValue, Json}
 import com.pharbers.pharbersmacro.CURDMacro._
 import module.common.{MergeStepResult, processor}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
-import module.proposals.dests.dest
 
 object ProposalModule extends ModuleTrait {
     val u: user = impl[user]
@@ -32,7 +31,7 @@ object ProposalModule extends ModuleTrait {
         case msg_formatProposalName(data) =>
             processor (_ => (Some(Map("result" -> pr.get(u.name).asOpt[Map[String, JsValue]].get(p.names))), None))(data)
         case msg_getBudgetInfo(_) =>
-            new dest(cm)
+//            new dest(cm)
             (pr, None)
         case _ => ???
     }

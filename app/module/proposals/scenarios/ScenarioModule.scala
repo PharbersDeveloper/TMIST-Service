@@ -32,16 +32,6 @@ object ScenarioModule extends ModuleTrait {
             processor(value => returnValue(ps.queryConnection(value)(pr)(s.sr)("bind_proposal_scenario")))(MergeStepResult(data, pr))
         case msg_getFirstScenario(data) =>
             processor (_ => (Some(Map(s.name -> pr.get(p.name).asOpt[Map[String, JsValue]].get(s.names).asOpt[List[JsValue]].get.head)), None))(data)
-        case msg_queryHospsByScenario(data) =>
-            processor(value => returnValue{
-                val a = sh.queryConnection(value)(pr)(h.sr)("scenario_hospital")
-                println(a)
-                Map("hospital" -> a("scenario").asOpt[Map[String, JsValue]].get("hospitals").as[List[JsValue]].head)
-            })(MergeStepResult(data, pr))
-        case msg_queryRepsByHosp(data) =>
-            processor(value => returnValue(hr.queryConnection(value)(pr)(r.sr)("scenario_hospital_representative")))(MergeStepResult(data, pr))
-        case msg_queryProdsByHosp(data) =>
-            processor(value => returnValue(hp.queryConnection(value)(pr)(prod.sr)("scenario_hospital_product")))(MergeStepResult(data, pr))
 
         case _ => ???
     }
