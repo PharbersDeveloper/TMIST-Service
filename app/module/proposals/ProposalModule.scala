@@ -30,7 +30,7 @@ object ProposalModule extends ModuleTrait {
         case msg_queryUsersByProposal(data) =>
             processor(value => returnValue(queryConnection(value)(pr)(u.sr)("bind_user_proposal")))(MergeStepResult(data, pr))
         case msg_formatProposalName(data) =>
-            processor (_ => (Some(Map("result" -> pr.get(u.name).asOpt[Map[String, JsValue]].get(names))), None))(data)
+            processor (_ => (Some(Map("result" -> pr.get(u.name).asOpt[Map[String, JsValue]].get(p.names))), None))(data)
         case msg_getBudgetInfo(_) =>
             new dest(cm)
             (pr, None)
