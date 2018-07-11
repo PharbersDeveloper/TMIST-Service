@@ -1,4 +1,4 @@
-package module.proposals.scenarios.representative
+package module.proposals.scenarios.representatives
 
 import com.mongodb.casbah
 import org.bson.types.ObjectId

@@ -12,7 +12,7 @@ import module.common.{MergeStepResult, processor}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
 import module.proposals.scenarios.products.{hospital2product, product}
 import module.proposals.scenarios.hospitals.{hospital, scenario2hospital}
-import module.proposals.scenarios.representative.{hospital2representative, representative}
+import module.proposals.scenarios.representatives.{hospital2representative, representative}
 
 object ScenarioModule extends ModuleTrait {
     val p: proposal = impl[proposal]

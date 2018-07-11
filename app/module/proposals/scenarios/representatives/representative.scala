@@ -1,4 +1,4 @@
-package module.proposals.scenarios.representative
+package module.proposals.scenarios.representatives
 
 import org.bson.types.ObjectId
 import play.api.libs.json.JsValue

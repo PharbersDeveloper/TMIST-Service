@@ -26,7 +26,7 @@ object ProposalMessage {
     case class msg_queryRepsByHosp(data: JsValue) extends msg_ScenarioCommand
     case class msg_queryProdsByHosp(data: JsValue) extends msg_ScenarioCommand
 
-    case class msg_getBudgetInfo(data : JsValue) extends msg_ScenarioCommand
+    case class msg_getBudgetInfo(data : JsValue) extends msg_ProposalCommand
     case class msg_getHumansInfo(data : JsValue) extends msg_ScenarioCommand
     case class msg_getHospDetail(data : JsValue) extends msg_ScenarioCommand
 
