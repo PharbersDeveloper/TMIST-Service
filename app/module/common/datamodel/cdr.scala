@@ -14,8 +14,8 @@ trait cdr {
                 case i: java.lang.Integer => cell._1 -> toJson(i.toInt)
                 case l: java.lang.Long => cell._1 -> toJson(l.toLong)
                 case d: java.lang.Double => cell._1 -> toJson(d.toDouble)
+                case lst: BasicDBList => cell._1 -> toJson(lst.toList.map(x => dr(x.asInstanceOf[DBObject])))
                 case obj: DBObject => cell._1 -> toJson(dr(obj))
-                case lst: List[DBObject] => cell._1 -> toJson(lst.map(dr))
             }
         }.toMap
     }

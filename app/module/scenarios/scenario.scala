@@ -7,7 +7,7 @@ import com.pharbers.cliTraits.DBTrait
 import play.api.libs.json.Json.toJson
 import com.pharbers.bmmessages.CommonModules
 import com.pharbers.dbManagerTrait.dbInstanceManager
-import play.api.libs.json.{JsObject, JsString, JsValue}
+import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 /**
   * Created by clock on 18-7-11.
@@ -36,23 +36,22 @@ class scenario extends ClassTag[scenario] with cdr {
 
         val root = pr.get(name).asInstanceOf[JsObject].value
         val current = root("current").asInstanceOf[JsObject].value
-        val connect = current(key).asInstanceOf[JsObject].value
+        val connect = current(key).asInstanceOf[JsArray].value
 
-        val connectLst = connect.values.toList
+        val connectLst = connect.toList
         val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
         val currentTmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
 
 
-        val postLst = root("post").asInstanceOf[JsObject].value
-        println(postLst)
+        val postLst = root("post").asInstanceOf[JsArray].value
         val postTmp = postLst.map{ post =>
-            val connect = post._2(key).asInstanceOf[JsObject].value
+            val connect = post(key).asInstanceOf[JsArray].value
 
-            val connectLst = connect.values.toList
+            val connectLst = connect.toList
             val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
             val tmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
 
-            post._1 -> toJson(post._2.asInstanceOf[JsObject].value ++ tmp)
+            toJson(post.asInstanceOf[JsObject].value ++ tmp)
         }
 
         Map(name -> toJson(root ++ Map("current" -> toJson(current ++ currentTmp), "post" -> toJson(postTmp))))
