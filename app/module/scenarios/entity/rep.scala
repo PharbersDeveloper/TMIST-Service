@@ -1,9 +1,9 @@
 package module.scenarios.entity
 
-import com.mongodb.casbah.Imports.{DBObject, _}
 import org.bson.types.ObjectId
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
+import com.mongodb.casbah.Imports.{DBObject, _}
 
 //        "_id" : ObjectId("5b43564ded925c05565b5c33"),
 //        "type" : "rep",
