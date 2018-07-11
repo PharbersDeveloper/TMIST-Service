@@ -1,10 +1,9 @@
-package module.proposals.entity
+package module.scenarios.entity
 
 import org.bson.types.ObjectId
 import play.api.libs.json.JsValue
-import com.mongodb.casbah.Imports._
 import play.api.libs.json.Json.toJson
-import com.mongodb.casbah.Imports.DBObject
+import com.mongodb.casbah.Imports.{DBObject, _}
 
 //    "_id" : ObjectId("5b43118fed925c05565b5bfc"),
 //    "type" : "hosp",
@@ -33,6 +32,8 @@ import com.mongodb.casbah.Imports.DBObject
 //           academic_influence: String = "", patient_distribution_department: String = "", outpatient_year: Long = 0,
 //           stationierung_year: Long = 0, surgery_year: Long = 0, payment_capacity: String = "", drug_into: String = "")
 
+
+@deprecated
 object hosp {
     val dr: DBObject => Map[String, JsValue] = { obj =>
         Map(

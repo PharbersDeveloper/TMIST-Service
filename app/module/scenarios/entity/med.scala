@@ -1,4 +1,4 @@
-package module.proposals.entity
+package module.scenarios.entity
 
 import org.bson.types.ObjectId
 import play.api.libs.json.JsValue
@@ -21,6 +21,7 @@ import com.mongodb.casbah.Imports.{DBObject, _}
 //            "latest_news" : "近期动态"
 
 
+@deprecated
 object med {
     val dr: DBObject => Map[String, JsValue] = { obj =>
         Map(

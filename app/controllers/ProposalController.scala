@@ -5,6 +5,7 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import play.api.libs.json.Json.toJson
 import module.proposals.ProposalMessage._
+import module.scenarios.ProposalMessage._
 import controllers.common.requestArgsQuery
 import com.pharbers.driver.PhRedisDriverImpl
 import com.pharbers.bmpattern.LogMessage.msg_log
@@ -73,17 +74,15 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
         }
     }
 
-    // TODO 未完成
     def queryHospLst() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query hosp lst in proposal"))), jv)
                     :: msg_authParseToken(jv)
-                    :: msg_queryProposal(jv)
-                    :: msg_queryScenariosByProposal(jv)
-                    :: msg_getFirstScenario(jv)
+                    :: msg_queryScenarios(jv)
                     :: msg_queryHospsByScenario(jv)
-                    :: msg_queryRepsByHosp(jv)
-                    :: msg_queryProdsByHosp(jv)
+                    :: msg_queryResosByScenario(jv)
+                    :: msg_queryGoodsByScenario(jv)
+                    :: msg_formatQueryHospLst(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
