@@ -25,13 +25,13 @@ import com.mongodb.casbah.Imports.DBObject
 //    "surgery_year" : NumberLong(800),
 //    "payment_capacity" : "高",
 //    "drug_into" : "进药情况"
+//
 //class hosp(dest_id: String = "", `type`: String = "", hosp_name: String = "",
 //           set_time: Int = 0, category: String = "", hosp_level: String = "",
 //           client_grade: String = "", beds: Long = 0, department: String = "",
 //           features_department: String = "", features_outpatient: String = "", receive_academic_degrees: String = "",
 //           academic_influence: String = "", patient_distribution_department: String = "", outpatient_year: Long = 0,
 //           stationierung_year: Long = 0, surgery_year: Long = 0, payment_capacity: String = "", drug_into: String = "")
-//        extends map2cc
 
 object hosp {
     val dr: DBObject => Map[String, JsValue] = { obj =>

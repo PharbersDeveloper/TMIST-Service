@@ -52,7 +52,7 @@ object ScenarioModule extends ModuleTrait {
             """
               |      {
               |    "type": "hosp_lst",
-              |    "attribute": {
+              |    "result": {
               |    "currentMonth": "2",
               |    "hospitalList": [
               |        {
