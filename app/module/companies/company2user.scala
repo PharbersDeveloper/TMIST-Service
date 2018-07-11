@@ -1,33 +1,28 @@
-package module.users.company
+package module.companies
 
-import com.mongodb
+import module.users.user
 import com.mongodb.casbah
-import module.companies.company
 import org.bson.types.ObjectId
 import com.mongodb.casbah.Imports
-import com.mongodb.casbah.Imports._
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
-import module.common.checkExist.checkBindExist
-import module.common.stragety.{bind, impl, one2one}
-import com.mongodb.casbah.Imports.{DBObject, MongoDBObject}
-import module.users.user
+import module.common.stragety.{bind, impl, one2many}
+import com.mongodb.casbah.Imports.{$or, DBObject, MongoDBObject, _}
 
 /**
-  * Created by spark on 18-7-5.
+  * Created by clock on 18-7-5.
   */
-class user2company extends one2one[user, company] with bind[user, company] {
-    override def createThis: user = impl[user]
-    override def createThat: company = impl[company]
+class company2user extends one2many[company, user] with bind[company, user] {
+    override def createThis: company = impl[company]
+    override def createThat: user = impl[user]
 
-    override def one2onessr(obj: DBObject): Map[String, JsValue] =
-        Map("data" -> toJson(
-            Map("condition" -> toJson(
-                Map("company_id" -> toJson(obj.getAs[String]("company_id").get))
-            ))
-        ))
+    override def one2manyssr(obj: Imports.DBObject): Map[String, JsValue] =
+        Map("_id" -> toJson(obj.getAs[String]("user_id").get))
 
-    override def one2onesdr(obj: mongodb.casbah.Imports.DBObject): Map[String, JsValue] =
+    override def one2manyaggregate(lst: List[Map[String, JsValue]]): DBObject =
+        $or(lst map (x => DBObject("_id" -> new ObjectId(x("_id").asOpt[String].get))))
+
+    override def one2manysdr(obj: Imports.DBObject): Map[String, JsValue] =
         Map(
             "condition" -> toJson(Map(
                 "bind_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
@@ -52,5 +47,4 @@ class user2company extends one2one[user, company] with bind[user, company] {
 
         builder.result
     }
-
 }

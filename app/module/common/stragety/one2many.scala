@@ -15,6 +15,7 @@ trait one2many[This <: basemodel, That <: basemodel] { this : bind[This, That] =
 
     def queryConnection(data : JsValue, primary_key : String = "_id")
                        (pr : Option[Map[String, JsValue]], outter : String = "")
+                       (tadr : DBObject => Map[String, JsValue])
                        (connect : String)
                        (implicit cm: CommonModules) : Map[String, JsValue] = {
 
@@ -38,7 +39,7 @@ trait one2many[This <: basemodel, That <: basemodel] { this : bind[This, That] =
                 val reVal = db.queryMultipleObject(ts.anqc(data), connect)(one2manyssr)
                 val result = reVal.size match {
                     case 0 => Nil
-                    case _ => db.queryMultipleObject(one2manyaggregate(reVal), ta.names)(ta.dr)
+                    case _ => db.queryMultipleObject(one2manyaggregate(reVal), ta.names)(tadr)
                 }
 
                 Map(tmp -> toJson(prMap ++ Map(ta.names -> toJson(result))))

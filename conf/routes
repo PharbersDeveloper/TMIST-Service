@@ -9,36 +9,42 @@ GET     /assets/*file                   controllers.Assets.versioned(path="/publ
 #POST   /api/file/upload                controllers.upload.FopController.uploadFile
 
 # 权限设置
-#POST    /api/role/push                  controllers.RoleController.pushRole()
-#POST    /api/role/pop                   controllers.RoleController.popRole()
-##很多验证和失败回滚问题
-#POST    /api/role/update                controllers.RoleController.updateRole()
-#POST    /api/role/query                 controllers.RoleController.queryRole()
-#POST    /api/role/query/multi           controllers.RoleController.queryMultiRole()
-#POST    /api/role/query/users           controllers.RoleController.queryUsersByRole()
+POST    /api/role/push                  controllers.RoleController.pushRole()
+POST    /api/role/pop                   controllers.RoleController.popRole()
+#很多验证和失败回滚问题
+POST    /api/role/update                controllers.RoleController.updateRole()
+POST    /api/role/query                 controllers.RoleController.queryRole()
+POST    /api/role/query/multi           controllers.RoleController.queryMultiRole()
+POST    /api/role/query/users           controllers.RoleController.queryUsersByRole()
 
 # 公司设置
-#POST    /api/company/push               controllers.CompanyController.pushCompany()
-#POST    /api/company/pop                controllers.CompanyController.popCompany()
-##很多验证和失败回滚问题
-#POST    /api/company/update             controllers.CompanyController.updateCompany()
-#POST    /api/company/query              controllers.CompanyController.queryCompany()
-#POST    /api/company/query/users        controllers.CompanyController.queryUsersByCompany()
+POST    /api/company/push               controllers.CompanyController.pushCompany()
+POST    /api/company/pop                controllers.CompanyController.popCompany()
+#很多验证和失败回滚问题
+POST    /api/company/update             controllers.CompanyController.updateCompany()
+POST    /api/company/query              controllers.CompanyController.queryCompany()
+POST    /api/company/query/users        controllers.CompanyController.queryUsersByCompany()
 
 # 用户设置
-POST    /api/user/query                 controllers.UserController.queryUser()
+POST    /api/user/detail                controllers.UserController.userDetail()
 POST    /api/user/login                 controllers.UserController.userLogin()
 
 # 关卡设置
-POST    /api/checkpoint/push            controllers.CheckpointController.pushCheckpoint()
-POST    /api/checkpoint/pop             controllers.CheckpointController.popCheckpoint()
-POST    /api/checkpoint/update          controllers.CheckpointController.updateCheckpoint()
-POST    /api/checkpoint/query           controllers.CheckpointController.queryCheckpoint()
-POST    /api/checkpoint/query/multi     controllers.CheckpointController.queryMultiCheckpoint()
+POST    /api/proposal/push              controllers.ProposalController.pushProposal()
+POST    /api/proposal/pop               controllers.ProposalController.popProposal()
+POST    /api/proposal/update            controllers.ProposalController.updateProposal()
+POST    /api/proposal/query             controllers.ProposalController.queryProposal()
+POST    /api/proposal/lst               controllers.ProposalController.queryProposalLst()
 
-# 关卡内信息
-POST    /api/scenario/hospital/lst      controllers.ScenarioController.getHospLst()
-POST    /api/scenario/budget/info       controllers.ScenarioController.getBudgetInfo()
-POST    /api/scenario/humans/info       controllers.ScenarioController.getHumansInfo()
-POST    /api/scenario/hospital/detail   controllers.ScenarioController.getHospDetail()
+# 关卡内场景信息
+POST    /api/proposal/hospital/lst      controllers.ProposalController.queryHospLst()
+POST    /api/proposal/budget/info       controllers.ProposalController.queryBudgetInfo()
+POST    /api/proposal/humans/info       controllers.ProposalController.queryHumansInfo()
+POST    /api/proposal/hospital/detail   controllers.ProposalController.getHospDetail()
 
+# 生成报告信息
+POST    /api/proposal/report/total               controllers.ProposalController.getTotalReport()
+POST    /api/proposal/report/hosp_product        controllers.ProposalController.getHospProdReport()
+POST    /api/proposal/report/repr_product        controllers.ProposalController.getRepProdReport()
+POST    /api/proposal/report/resource_in_out     controllers.ProposalController.getResourceIO()
+POST    /api/proposal/report/repr_ind_resource   controllers.ProposalController.getRepIndResources()

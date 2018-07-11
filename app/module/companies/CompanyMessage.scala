@@ -1,4 +1,4 @@
-package module.company
+package module.companies
 
 import play.api.libs.json.JsValue
 import com.pharbers.bmmessages.CommonMessage

@@ -8,6 +8,9 @@ import com.pharbers.bmpattern.ModuleTrait
 import module.common.{MergeStepResult, processor}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
 
+/**
+  * Created by spark on 18-7-5.
+  */
 object UserCompanyModule extends ModuleTrait {
     val uc: user2company = impl[user2company]
 
@@ -17,11 +20,11 @@ object UserCompanyModule extends ModuleTrait {
                             (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
         case msg_bindUserCompany(data) =>
-            processor(value => returnValue(bindConnection(value)("user_company")))(MergeStepResult(data, pr))
+            processor(value => returnValue(bindConnection(value)("bind_user_company")))(MergeStepResult(data, pr))
         case msg_unbindUserCompany(data) =>
-            processor(value => returnValue(unbindConnection(value)("user_company")))(MergeStepResult(data, pr))
+            processor(value => returnValue(unbindConnection(value)("bind_user_company")))(MergeStepResult(data, pr))
         case msg_userCompanyInfo(data) =>
-            processor(value => returnValue(queryConnection(value)(pr)("user_company")))(MergeStepResult(data, pr))
+            processor(value => returnValue(queryConnection(value)(pr)("bind_user_company")))(MergeStepResult(data, pr))
 
         case _ => ???
     }

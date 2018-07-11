@@ -1,5 +1,6 @@
 package module.roles
 
+import module.users.user
 import module.common.processor._
 import module.roles.RoleMessage._
 import play.api.libs.json.JsValue
@@ -14,6 +15,7 @@ import com.pharbers.bmmessages.{CommonModules, MessageDefines}
   */
 object RoleModule extends ModuleTrait {
     val r: role = impl[role]
+    val u: user = impl[user]
     val r2u: role2user = impl[role2user]
     import r._
     import r2u._
@@ -29,7 +31,7 @@ object RoleModule extends ModuleTrait {
         case msg_queryRole(data) => queryMacro(qc, dr, data, names, name)
         case msg_queryRoleMulti(data) => queryMultiMacro(qcm, dr, data, names, names)
         case msg_queryUsersByRole(data) =>
-            processor(value => returnValue(queryConnection(value)(pr)("user_role")))(MergeStepResult(data, pr))
+            processor(value => returnValue(queryConnection(value)(pr)(u.sr)("bind_user_role")))(MergeStepResult(data, pr))
         case _ => ???
     }
 
