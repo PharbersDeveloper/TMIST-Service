@@ -39,8 +39,14 @@ class scenario extends ClassTag[scenario] with cdr {
         val connect = current(key).asInstanceOf[JsArray].value
 
         val connectLst = connect.toList
-        val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
-        val currentTmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
+        val currentTmp = connectLst.map{ conn =>
+            val conn_obj = conn.asInstanceOf[JsObject].value
+            val conn_cond = DBObject("_id" -> new ObjectId(conn_obj("id").asInstanceOf[JsString].value))
+
+            conn_obj ++ db.queryObject(conn_cond, coll_name)(out).get
+        }
+//        val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
+//        val currentTmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
 
 
         val postLst = root("post").asInstanceOf[JsArray].value
@@ -48,13 +54,31 @@ class scenario extends ClassTag[scenario] with cdr {
             val connect = post(key).asInstanceOf[JsArray].value
 
             val connectLst = connect.toList
-            val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
-            val tmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
+            val tmp = connectLst.map { conn =>
+                val conn_obj = conn.asInstanceOf[JsObject].value
+                val conn_cond = DBObject("_id" -> new ObjectId(conn_obj("id").asInstanceOf[JsString].value))
 
-            toJson(post.asInstanceOf[JsObject].value ++ tmp)
+                conn_obj ++ db.queryObject(conn_cond, coll_name)(out).get
+            }
+
+//            val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
+//            val tmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
+
+            toJson(post.asInstanceOf[JsObject].value ++ Map(key -> toJson(tmp)))
         }
 
-        Map(name -> toJson(root ++ Map("current" -> toJson(current ++ currentTmp), "post" -> toJson(postTmp))))
+        Map(
+            name -> toJson(
+                root ++ Map(
+                    "current" -> toJson(
+                        current ++ Map(
+                            key -> toJson(currentTmp)
+                        )
+                    ),
+                    "post" -> toJson(postTmp)
+                )
+            )
+        )
     }
 
 
