@@ -17,4 +17,7 @@ object ProposalMessage {
     case class msg_queryGoodsByScenario(data: JsValue) extends msg_ScenarioCommand
 
     case class msg_formatQueryHospLst(data: JsValue) extends msg_ScenarioFormatCommand
+    case class msg_formatQueryBudget(data: JsValue) extends msg_ScenarioFormatCommand
+    case class msg_formatQueryHumans(data: JsValue) extends msg_ScenarioFormatCommand
+    case class msg_formatQueryHospitalDetails(data: JsValue) extends msg_ScenarioFormatCommand
 }
