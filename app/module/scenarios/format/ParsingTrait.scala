@@ -23,7 +23,7 @@ trait ParsingTrait {
 						"name" -> x("hosp_name"),
 						"category" -> x("category"),
 						"hosp_level" -> x("hosp_level"),
-						"department" -> x("department"),
+						"department" -> x("features_outpatient"),
 						"beds" -> x("beds"),
 						"outpatient" -> x("outpatient_year"),
 						"surgery" -> x("surgery_year")
@@ -100,12 +100,51 @@ trait ParsingTrait {
 		}
 	}
 	
-//	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
-//		try {
-//			val data = m("scenario")
-//
-//		} catch {
-//			case ex: Exception => (None, Some(ErrorCode.errorToJson(ex.getMessage)))
-//		}
-//	}
+	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
+		try {
+			val data = m("scenario")
+			val hospital_id = (m("data") \ "condition" \ "hospital_id").as[String]
+			val hospital = (data \ "current" \ "connect_dest").as[List[String Map JsValue]].find(f => f("id").as[String] == hospital_id).
+				map ( x => Map("id" -> toJson(hospital_id),
+					"name" -> x("hosp_name"),
+					"basicinfo" -> toJson(
+						Map("type" -> x("category"),
+							"hosp_level" -> x("hosp_level"),
+							"department" -> x("features_outpatient"),
+							"beds" -> x("beds"),
+							"outpatient" -> x("outpatient_year"),
+							"surgery" -> x("surgery_year"),
+							"hospitalizations" -> x("stationierung_year")
+						)),
+					"news" -> Map.empty,
+					"policy" -> Map.empty
+				))
+
+			val medicines = (data \ "current" \ "dest_goods").as[List[String Map JsValue]].filter(f => f("dest_id").as[String] == hospital_id).
+				map { x =>
+					(data \ "current" \ "connect_goods").as[List[String Map JsValue]].
+						find(f => f("id").as[String] == x("goods_id").as[String]).
+						map { basic =>
+							Map("id" -> basic("id"),
+								"name" -> basic("category"),
+								"marketpotential" -> toJson(12134523),
+								"potentialgrowth" -> x("potential"),
+								"previoussales" -> x("pre_sales"),
+								"previousgrowth" -> toJson(12134523),
+								"share" -> x("share"),
+								"contributionrate" -> x("cont_rate"),
+								"detail" -> toJson(
+									Map("id" -> toJson(s"${basic("id").as[String]}_detail"),
+//										"value"
+//										"type" -> basic("category")
+									))
+							)
+						}
+				}
+
+			(Some(Map("" -> toJson(1))), None)
+		} catch {
+			case ex: Exception => (None, Some(ErrorCode.errorToJson(ex.getMessage)))
+		}
+	}
 }
