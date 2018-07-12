@@ -40,7 +40,7 @@ POST    /api/proposal/lst               controllers.ProposalController.queryProp
 POST    /api/proposal/hospital/lst      controllers.ProposalController.queryHospLst()
 POST    /api/proposal/budget/info       controllers.ProposalController.queryBudgetInfo()
 POST    /api/proposal/humans/info       controllers.ProposalController.queryHumansInfo()
-POST    /api/proposal/hospital/detail   controllers.ProposalController.getHospDetail()
+POST    /api/proposal/hospital/detail   controllers.ProposalController.queryHospDetail()
 
 # 生成报告信息
 POST    /api/proposal/report/total               controllers.ProposalController.getTotalReport()

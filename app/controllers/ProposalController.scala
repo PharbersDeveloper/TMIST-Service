@@ -116,7 +116,7 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
         }
     }
 
-    def getHospDetail() = Action { request =>
+    def queryHospDetail() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
             		:: msg_authParseToken(jv)
