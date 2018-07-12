@@ -45,8 +45,6 @@ class scenario extends ClassTag[scenario] with cdr {
 
             conn_obj ++ db.queryObject(conn_cond, coll_name)(out).get
         }
-//        val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
-//        val currentTmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
 
 
         val postLst = root("post").asInstanceOf[JsArray].value
@@ -60,9 +58,6 @@ class scenario extends ClassTag[scenario] with cdr {
 
                 conn_obj ++ db.queryObject(conn_cond, coll_name)(out).get
             }
-
-//            val connCond = $or(connectLst map (x => DBObject("_id" -> new ObjectId(x("id").asInstanceOf[JsString].value))))
-//            val tmp = Map(key -> toJson(db.queryMultipleObject(connCond, coll_name)(out)))
 
             toJson(post.asInstanceOf[JsObject].value ++ Map(key -> toJson(tmp)))
         }
