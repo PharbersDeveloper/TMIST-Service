@@ -100,12 +100,12 @@ trait ParsingTrait {
 		}
 	}
 	
-	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
-		try {
-			val data = m("scenario")
-			
-		} catch {
-			case ex: Exception => (None, Some(ErrorCode.errorToJson(ex.getMessage)))
-		}
-	}
+//	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
+//		try {
+//			val data = m("scenario")
+//
+//		} catch {
+//			case ex: Exception => (None, Some(ErrorCode.errorToJson(ex.getMessage)))
+//		}
+//	}
 }
