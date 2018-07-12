@@ -2,11 +2,19 @@ TMIST-Service
 
 # 关键命名对照表
 
-| 中文 | 英文 |
-| :---: | :---: |
-| 关卡        | checkpoint    |
-| 场景        | scenario      |
-| 规则/权限    | role      |
+| 中文 | 英文 | 复数 | 
+| :---: | :---: | :---: |
+| 用户| user | users |
+| 公司| company | companies |
+| 规则/权限| role | roles |
+| 关卡 | checkpoint | checkpoints  |
+| 场景 | scenario | scenarios |
+| 目标对象 | dest | dests |
+| 医院    | hosp | hosps |
+| 资源    | reso | resos |
+| 销售代表    | rep | reps |
+| 商品    | goods | goods |
+| 药品    | med | meds |
 
 # role角色定义
 
