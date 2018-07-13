@@ -1,12 +1,12 @@
-package module.proposals.reports
+package module.reports
 
-import module.roles.role
-import module.common.processor
-import play.api.libs.json.Json.toJson
-import com.pharbers.bmpattern.ModuleTrait
-import play.api.libs.json.{JsValue, Json}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
-import module.proposals.ProposalMessage._
+import com.pharbers.bmpattern.ModuleTrait
+import module.common.processor
+import module.reports.ProposalMessage._
+import module.roles.role
+import play.api.libs.json.Json.toJson
+import play.api.libs.json.{JsValue, Json}
 
 object ReportModule extends ModuleTrait {
     val role = new role()
@@ -17,15 +17,15 @@ object ReportModule extends ModuleTrait {
     def dispatchMsg(msg: MessageDefines)(pr: Option[Map[String, JsValue]])
                    (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
-        case msg_getTotalReport(data) =>
+        case msg_queryTotalReport(data) =>
             processor(value => getTotalReport(value))(data)
-        case msg_getHospProdReport(data) =>
+        case msg_queryDestsGoodsReport(data) =>
             processor(value => getHospProdReport(value))(data)
-        case msg_getRepProdReport(data) =>
+        case msg_queryResosGoodsReport(data) =>
             processor(value => getRepProdReport(value))(data)
-        case msg_getResourceIO(data) =>
+        case msg_queryResosIO(data) =>
             processor(value => getResourceIO(value))(data)
-        case msg_getRepIndResources(data) =>
+        case msg_queryRepIndResos(data) =>
             processor(value => getRepIndResources(value))(data)
 
         case _ => ???

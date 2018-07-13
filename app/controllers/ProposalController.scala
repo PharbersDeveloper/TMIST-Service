@@ -130,44 +130,4 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
         }
     }
 
-    def getTotalReport() = Action { request =>
-        requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
-                    :: msg_getTotalReport(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
-        }
-    }
-
-    def getHospProdReport() = Action { request =>
-        requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("push new checkpoint"))), jv)
-                    :: msg_getHospProdReport(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
-        }
-    }
-
-    def getRepProdReport() = Action { request =>
-        requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get humans info"))), jv)
-                    :: msg_getRepProdReport(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
-        }
-    }
-
-    def getResourceIO() = Action { request =>
-        requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
-                    :: msg_getResourceIO(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
-        }
-    }
-
-    def getRepIndResources() = Action { request =>
-        requestArgsQuery().requestArgs(request) { jv =>
-            MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
-                    :: msg_getRepIndResources(jv)
-                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
-        }
-    }
-
 }
