@@ -15,6 +15,7 @@ object ScenarioFormatModule extends ModuleTrait with ParsingTrait {
         case msg_formatQueryBudget(_) => ps2m(pr)(formatBudget)
         case msg_formatQueryHumans(_) => ps2m(pr)(formatHumans)
         case msg_formatQueryHospitalDetails(data) =>
+//            (pr, None)
 			ps2m(pr.map( _ ++: data.as[JsObject].value.toMap).orElse(pr))(formatHospitalDetails)
         case _ => ???
     }

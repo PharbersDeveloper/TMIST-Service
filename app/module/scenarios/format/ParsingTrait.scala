@@ -1,7 +1,7 @@
 package module.scenarios.format
 
 import com.pharbers.ErrorCode
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.json.Json.toJson
 
 trait ParsingTrait {
@@ -99,11 +99,183 @@ trait ParsingTrait {
 			case ex: Exception => (None, Some(ErrorCode.errorToJson(ex.getMessage)))
 		}
 	}
-	
+
+//	def getHospDetail(data: JsValue): (Option[Map[String, JsValue]], Option[JsValue]) = {
+//
+//		val hospDetail =
+//			"""
+//			  |{
+//			  |"type": "humans_progress",
+//			  |"attribute":
+//			  |{
+//			  |    "hospital": {
+//			  |        "id": "idididi",
+//			  |        "name": "中日医院",
+//			  |        "basicinfo": {
+//			  |            "type": "综合",
+//			  |            "level": "综合/三甲",
+//			  |            "department": "皮肤科",
+//			  |            "beds": "1000",
+//			  |            "outpatient": 1234545,
+//			  |            "surgery": 1000,
+//			  |            "hospitalizations": 1000
+//			  |        },
+//			  |        "news": { },
+//			  |        "policy": { }
+//			  |    },
+//			  |    "medicines": [
+//			  |        {
+//			  |            "id": "medicine000",
+//			  |            "name": "口服抗生素",
+//			  |            "marketpotential": 333444555,
+//			  |            "potentialgrowth": 99,
+//			  |            "previoussales": 555444,
+//			  |            "previousgrowth": 99,
+//			  |            "share": 12,
+//			  |            "contributionrate": 4,
+//			  |            "detail": {
+//			  |                "id": "medicine000_detail",
+//			  |                "value": [
+//			  |                    {
+//			  |                        "id": "霉素",
+//			  |                        "type": "口服抗生素",
+//			  |                        "treatmentarea": "抗生素",
+//			  |                        "selltime": "2000",
+//			  |                        "medicalinsurance": "甲类",
+//			  |                        "development": "首仿",
+//			  |                        "companyprice": 44
+//			  |                    }
+//			  |                ]
+//			  |            },
+//			  |            "history": {
+//			  |                "id": "medicine000_history",
+//			  |                "value": [
+//			  |                    {
+//			  |                        "time": "星期一",
+//			  |                        "representative": "小三",
+//			  |                        "timemanagement": "12天",
+//			  |                        "budgetallocation": 5000,
+//			  |                        "budgetratio": 5000,
+//			  |                        "indicator": 50000,
+//			  |                        "growth": 1.23,
+//			  |                        "achievementrate": 95
+//			  |                    }
+//			  |                ]
+//			  |            },
+//			  |            "competitionproducts": {
+//			  |                "id": "medicine000_competitionproducts",
+//			  |                "value": [ ]
+//			  |            }
+//			  |        },{
+//			  |            "id": "medicine001",
+//			  |            "name": "口服护发素",
+//			  |            "marketpotential": 333444555,
+//			  |            "potentialgrowth": 99,
+//			  |            "previoussales": 555444,
+//			  |            "previousgrowth": 99,
+//			  |            "share": 12,
+//			  |            "contributionrate": 4,
+//			  |            "detail": {
+//			  |                "id": "medicine001_detail",
+//			  |                "value": [
+//			  |                    {
+//			  |                        "id": "霉素",
+//			  |                        "type": "口服抗生素",
+//			  |                        "treatmentarea": "抗生素",
+//			  |                        "selltime": "2000",
+//			  |                        "medicalinsurance": "甲类",
+//			  |                        "development": "首仿",
+//			  |                        "companyprice": 44
+//			  |                    }
+//			  |                ]
+//			  |            },
+//			  |            "history": {
+//			  |                "id": "medicine001_history",
+//			  |                "value": [
+//			  |                    {
+//			  |                        "time": "星期一",
+//			  |                        "representative": "小三",
+//			  |                        "timemanagement": "12天",
+//			  |                        "budgetallocation": 5000,
+//			  |                        "budgetratio": 5000,
+//			  |                        "indicator": 50000,
+//			  |                        "growth": 1.23,
+//			  |                        "achievementrate": 95
+//			  |                    }
+//			  |                ]
+//			  |            },
+//			  |            "competitionproducts": {
+//			  |                "id": "medicine001_competitionproducts",
+//			  |                "value": [ ]
+//			  |            }
+//			  |        },{
+//			  |            "id": "medicine002",
+//			  |            "name": "口服叶绿素",
+//			  |            "marketpotential": 333444555,
+//			  |            "potentialgrowth": 99,
+//			  |            "previoussales": 555444,
+//			  |            "previousgrowth": 99,
+//			  |            "share": 12,
+//			  |            "contributionrate": 4,
+//			  |            "detail": {
+//			  |                "id": "medicine002_detail",
+//			  |                "value": [
+//			  |                    {
+//			  |                        "id": "霉素",
+//			  |                        "type": "口服抗生素",
+//			  |                        "treatmentarea": "抗生素",
+//			  |                        "selltime": "2000",
+//			  |                        "medicalinsurance": "甲类",
+//			  |                        "development": "首仿",
+//			  |                        "companyprice": 44
+//			  |                    }
+//			  |                ]
+//			  |            },
+//			  |            "history": {
+//			  |                "id": "medicine002_history",
+//			  |                "value": [
+//			  |                    {
+//			  |                        "time": "星期一",
+//			  |                        "representative": "小三",
+//			  |                        "timemanagement": "12天",
+//			  |                        "budgetallocation": 5000,
+//			  |                        "budgetratio": 5000,
+//			  |                        "indicator": 50000,
+//			  |                        "growth": 1.23,
+//			  |                        "achievementrate": 95
+//			  |                    }
+//			  |                ]
+//			  |            },
+//			  |            "competitionproducts": {
+//			  |                "id": "medicine002_competitionproducts",
+//			  |                "value": [ ]
+//			  |            }
+//			  |        }
+//			  |    ]
+//			  |}
+//			  |}
+//			""".stripMargin
+//
+//		val version =
+//			"""
+//			  |{
+//			  |     "major": 1,
+//			  |     "minor": 0
+//			  |}
+//			""".stripMargin
+//
+//		(Some(Map(
+//			"timestamp" -> toJson(1530689119000L),
+//			"version" -> Json.parse(version),
+//			"data" -> Json.parse(hospDetail)
+//		)), None)
+//	}
 	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
 		try {
 			val data = m("scenario")
 			val hospital_id = (m("data") \ "condition" \ "hospital_id").as[String]
+			val connect_goods = (data \ "current" \ "connect_goods").as[List[String Map JsValue]]
+			
 			val hospital = (data \ "current" \ "connect_dest").as[List[String Map JsValue]].find(f => f("id").as[String] == hospital_id).
 				map ( x => Map("id" -> toJson(hospital_id),
 					"name" -> x("hosp_name"),
@@ -116,35 +288,92 @@ trait ParsingTrait {
 							"surgery" -> x("surgery_year"),
 							"hospitalizations" -> x("stationierung_year")
 						)),
-					"news" -> Map.empty,
-					"policy" -> Map.empty
-				))
+					"news" -> Json.parse("{}"),
+					"policy" -> Json.parse("{}")
+				)).getOrElse(throw new Exception("is null"))
 
-			val medicines = (data \ "current" \ "dest_goods").as[List[String Map JsValue]].filter(f => f("dest_id").as[String] == hospital_id).
-				map { x =>
-					(data \ "current" \ "connect_goods").as[List[String Map JsValue]].
-						find(f => f("id").as[String] == x("goods_id").as[String]).
-						map { basic =>
-							Map("id" -> basic("id"),
-								"name" -> basic("category"),
-								"marketpotential" -> toJson(12134523),
-								"potentialgrowth" -> x("potential"),
-								"previoussales" -> x("pre_sales"),
-								"previousgrowth" -> toJson(12134523),
-								"share" -> x("share"),
-								"contributionrate" -> x("cont_rate"),
-								"detail" -> toJson(
-									Map("id" -> toJson(s"${basic("id").as[String]}_detail"),
-//										"value"
-//										"type" -> basic("category")
-									))
-							)
-						}
+			val goods = (data \ "current" \ "dest_goods").as[List[String Map JsValue]].
+				filter( f => f("dest_id").as[String] == hospital_id).
+				map ( x => connect_goods.find(f => f("id").as[String] == x("goods_id").as[String]).map ( basic => basic ++ x).
+				getOrElse(throw new Exception("is null"))).groupBy(g => g("category").as[String]).map { x =>
+				val head = x._2.head
+				
+				println(s"${x._1} === ${(head("relationship") \ "compete_goods").as[List[String Map JsValue]]}")
+				
+				val aa =  (head("relationship") \ "compete_goods").as[List[String Map JsValue]].flatMap { cg =>
+					connect_goods.filter(f =>f("id").as[String] == cg("goods_id").as[String]).map { d =>
+						Map("product_name" -> d("med_name"),
+							"type" -> toJson(x._1),
+							"treatmentarea" -> d("therapeutic_field"),
+							"selltime" -> d("set_time"),
+							"medicalinsurance" -> d("insure_type"),
+							"development" -> d("research_type"),
+							"companyprice" -> d("ref_price")
+						)
+					}
 				}
+				
+//				println(aa)
+				
+				val details = x._2.map ( d =>
+					Map("product_name" -> d("med_name"),
+						"type" -> toJson(x._1),
+						"treatmentarea" -> d("therapeutic_field"),
+						"selltime" -> d("set_time"),
+						"medicalinsurance" -> d("insure_type"),
+						"development" -> d("research_type"),
+						"companyprice" -> d("ref_price")
+					)
+				) /*++ (head("relationship") \ "compete_goods").as[List[String Map JsValue]].flatMap { cg =>
+					(data \ "current" \ "connect_goods").as[List[String Map JsValue]].
+						filter(f => f("id").as[String] == cg("goods_id").as[String]).map { d =>
+						Map("product_name" -> d("med_name"),
+							"type" -> toJson(x._1),
+							"treatmentarea" -> d("therapeutic_field"),
+							"selltime" -> d("set_time"),
+							"medicalinsurance" -> d("insure_type"),
+							"development" -> d("research_type"),
+							"companyprice" -> d("ref_price")
+						)
+					}
+				}*/
+				val competitionproducts = (head("relationship") \ "compete_goods").as[List[String Map JsValue]].flatMap { x =>
+					(data \ "current" \ "connect_goods").as[List[String Map JsValue]].
+						filter(f => f("id").as[String] == x("goods_id").as[String])
+				}
+				val history = (data \ "post").as[List[String Map JsValue]]
+				
+				
+				Map("id" -> head("id"),
+					"name" -> toJson(x._1),
+					"marketpotential" -> (head("relationship") \ "potential").as[JsValue],
+					"potentialgrowth" -> toJson(12134523),
+					"previoussales" -> (head("relationship") \ "pre_sales").as[JsValue],
+					"previousgrowth" -> toJson(12134523),
+					"share" -> (head("relationship") \ "share").as[JsValue],
+					"contributionrate" -> (head("relationship") \ "cont_rate").as[JsValue],
+					"detail" -> toJson(Map(
+							"id" -> toJson(s"${head("id").as[String]}_detail"),
+							"value" -> toJson(details)
+						)),
+					"history" -> toJson(1),
+					"competitionproducts" -> toJson(Map(
+						"id" -> toJson(s"${head("id").as[String]}_competitionproducts"),
+						"value" -> toJson(competitionproducts)
+					))
+				)
+			}.toList
 
-			(Some(Map("" -> toJson(1))), None)
+			
+			
+			(Some(Map("result" -> toJson(
+				Map("hospital" -> toJson(hospital),
+					"medicines" -> toJson(goods))
+			))), None)
 		} catch {
-			case ex: Exception => (None, Some(ErrorCode.errorToJson(ex.getMessage)))
+			case ex: Exception =>
+				println(ex.getMessage)
+				(None, Some(ErrorCode.errorToJson(ex.getMessage)))
 		}
 	}
 }

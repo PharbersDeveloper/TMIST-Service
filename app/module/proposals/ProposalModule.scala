@@ -4,10 +4,9 @@ import ProposalMessage._
 import module.users.user
 import module.common.processor._
 import module.roles.RoleMessage._
+import play.api.libs.json.JsValue
 import module.common.stragety.impl
-import play.api.libs.json.Json.toJson
 import com.pharbers.bmpattern.ModuleTrait
-import play.api.libs.json.{JsValue, Json}
 import com.pharbers.pharbersmacro.CURDMacro._
 import module.common.{MergeStepResult, processor}
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
@@ -30,9 +29,6 @@ object ProposalModule extends ModuleTrait {
             processor(value => returnValue(queryConnection(value)(pr)(u.sr)("bind_user_proposal")))(MergeStepResult(data, pr))
         case msg_formatProposalName(data) =>
             processor (_ => (Some(Map("result" -> pr.get(u.name).asOpt[Map[String, JsValue]].get(p.names))), None))(data)
-        case msg_getBudgetInfo(_) =>
-//            new dest(cm)
-            (pr, None)
         case _ => ???
     }
 
