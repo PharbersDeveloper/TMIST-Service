@@ -26,6 +26,7 @@ class ReportController @Inject()(implicit cc: ControllerComponents, as_inject: A
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query total report"))), jv)
                     :: msg_authParseToken(jv)
+                    :: msg_queryReport(jv)
                     :: msg_queryTotalReport(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
@@ -36,6 +37,7 @@ class ReportController @Inject()(implicit cc: ControllerComponents, as_inject: A
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query dests goods RelationReport"))), jv)
                     :: msg_authParseToken(jv)
+                    :: msg_queryReport(jv)
                     :: msg_queryDestsGoodsReport(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
@@ -46,6 +48,7 @@ class ReportController @Inject()(implicit cc: ControllerComponents, as_inject: A
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query resourse goods RelationReport"))), jv)
                     :: msg_authParseToken(jv)
+                    :: msg_queryReport(jv)
                     :: msg_queryResosGoodsReport(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
@@ -56,6 +59,7 @@ class ReportController @Inject()(implicit cc: ControllerComponents, as_inject: A
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query resourse intput output RelationReport"))), jv)
                     :: msg_authParseToken(jv)
+                    :: msg_queryReport(jv)
                     :: msg_queryResosIO(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
@@ -66,6 +70,7 @@ class ReportController @Inject()(implicit cc: ControllerComponents, as_inject: A
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query representative indicators resourse RelationReport"))), jv)
                     :: msg_authParseToken(jv)
+                    :: msg_queryReport(jv)
                     :: msg_queryRepIndResos(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))

@@ -1,8 +1,8 @@
 package module.common.datamodel
 
-import com.mongodb.casbah.Imports.{DBObject, ObjectId, _}
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
+import com.mongodb.casbah.Imports.{DBObject, ObjectId, _}
 
 trait cdr {
 
