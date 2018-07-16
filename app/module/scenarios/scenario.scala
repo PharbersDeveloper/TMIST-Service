@@ -47,7 +47,7 @@ class scenario extends ClassTag[scenario] with cdr {
         }
 
 
-        val postLst = root("post").asInstanceOf[JsArray].value
+        val postLst = root("past").asInstanceOf[JsArray].value
         val postTmp = postLst.map{ post =>
             val connect = post(key).asInstanceOf[JsArray].value
 
@@ -70,7 +70,7 @@ class scenario extends ClassTag[scenario] with cdr {
                             key -> toJson(currentTmp)
                         )
                     ),
-                    "post" -> toJson(postTmp)
+                    "past" -> toJson(postTmp)
                 )
             )
         )
