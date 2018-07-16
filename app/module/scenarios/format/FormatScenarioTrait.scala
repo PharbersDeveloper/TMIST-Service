@@ -11,21 +11,11 @@ import module.common.datamodel.cdr
 
 trait FormatScenarioTrait extends cdr {
 	def format(input: Option[String Map JsValue])
-	        (out: (String Map JsValue, CommonModules) => (Option[String Map JsValue], Option[JsValue]))
-			(implicit cm: CommonModules): (Option[String Map JsValue], Option[JsValue]) = {
+	        (out: String Map JsValue => (Option[String Map JsValue], Option[JsValue])): (Option[String Map JsValue], Option[JsValue]) = {
 		input match {
 			case None => (None, None)
-			case Some(o) => out(o, cm)
+			case Some(o) => out(o)
 		}
-	}
-
-	def queryReport(rid: String)
-	               (out: DBObject => Map[String, JsValue])
-	               (implicit cm: CommonModules): String Map JsValue = {
-
-		val conn: dbInstanceManager = cm.modules.get.get("db").map(x => x.asInstanceOf[dbInstanceManager]).getOrElse(throw new Exception("no db connection"))
-		val db: DBTrait = conn.queryDBInstance("report").get
-		db.queryObject(DBObject("_id" -> new ObjectId(rid)), "reports")(out).get
 	}
 	
 	val jvdr: JsValue => String Map JsValue = { jv =>
@@ -40,7 +30,15 @@ trait FormatScenarioTrait extends cdr {
 		}
 	}
 	
-	val formatHospitals: (String Map JsValue, CommonModules) => (Option[String Map JsValue], Option[JsValue])  = { (m, c) =>
+//	val searchJv: JsValue => String Map JsValue = {
+//
+//	}
+	
+	val formatHospitals: String Map JsValue => (Option[String Map JsValue], Option[JsValue])  = { m =>
+		
+//		val aa = (m("scenario") \ "ps")//.isInstanceOf[JsUndefined]
+//		println(aa)
+		
 		
 		val data = jvdr(jvdr(m("scenario"))("current"))
 		val reVal = data("dest_goods").as[List[String Map JsValue]].groupBy(g => g("dest_id").as[String]).map { dg =>
@@ -50,10 +48,10 @@ trait FormatScenarioTrait extends cdr {
 					"name" -> x("hosp_name"),
 					"category" -> x("category"),
 					"hosp_level" -> x("hosp_level"),
-					"department" -> x("features_outpatient"),
+					"department" -> x("featured_outpatient"),
 					"beds" -> x("beds"),
-					"outpatient" -> x("outpatient_year"),
-					"surgery" -> x("surgery_year")
+					"outpatient" -> x("income_outpatient_yearly"),
+					"surgery" -> x("income_surgery_yearly")
 				)
 			).getOrElse(throw new Exception("is null"))
 			
@@ -86,7 +84,7 @@ trait FormatScenarioTrait extends cdr {
 		)), None)
 	}
 	
-	val formatBudget: (String Map JsValue, CommonModules)=> (Option[String Map JsValue], Option[JsValue]) = { (m, c) =>
+	val formatBudget: String Map JsValue=> (Option[String Map JsValue], Option[JsValue]) = { m =>
 		val data = jvdr(jvdr(m("scenario"))("current"))
 		val total = data("connect_reso").as[List[String Map JsValue]].find(f => f("type").as[String] == "money").
 			map( x => Map("total" -> (x("relationship") \ "total_budget_money").as[JsValue])).
@@ -96,7 +94,7 @@ trait FormatScenarioTrait extends cdr {
 		(Some(Map("result" -> toJson(total ++ Map("used" -> toJson(used))))), None)
 	}
 	
-	val formatHumans: (String Map JsValue, CommonModules) => (Option[String Map JsValue], Option[JsValue]) = { (m, c) =>
+	val formatHumans: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
 		val data = jvdr(jvdr(m("scenario"))("current"))
 		val total = data("connect_reso").as[List[String Map JsValue]].
 				find(f => f("type").as[String] == "day").map(x => (x("relationship") \ "total_budget_day").as[Int]).
@@ -113,10 +111,8 @@ trait FormatScenarioTrait extends cdr {
 		(Some(Map("result" -> toJson(reVal))), None)
 	}
 
-	val formatHospitalDetails: (String Map JsValue, CommonModules) => (Option[String Map JsValue], Option[JsValue]) = { (m, c) =>
+	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
 		try {
-			implicit val cm: CommonModules = c
-
 			val data = jvdr(jvdr(m("scenario"))("current"))
 			val hospital_id = (m("data") \ "condition" \ "hospital_id").as[String]
 			val connect_goods = data("connect_goods").as[List[String Map JsValue]]
@@ -127,11 +123,11 @@ trait FormatScenarioTrait extends cdr {
 					"basicinfo" -> toJson(
 						Map("type" -> x("category"),
 							"hosp_level" -> x("hosp_level"),
-							"department" -> x("features_outpatient"),
+							"department" -> x("featured_outpatient"),
 							"beds" -> x("beds"),
-							"outpatient" -> x("outpatient_year"),
-							"surgery" -> x("surgery_year"),
-							"hospitalizations" -> x("stationierung_year")
+							"outpatient" -> x("income_outpatient_yearly"),
+							"surgery" -> x("income_surgery_yearly"),
+							"hospitalizations" -> x("income_inpatient_yearly")
 						)),
 					"news" -> Json.parse("{}"),
 					"policy" -> Json.parse("{}")
@@ -144,20 +140,20 @@ trait FormatScenarioTrait extends cdr {
 				val head = x._2.head
 				
 				val details = x._2.map ( d =>
-					Map("product_name" -> d("med_name"),
+					Map("product_name" -> d("brand_name"),
 						"type" -> toJson(x._1),
 						"treatmentarea" -> d("therapeutic_field"),
-						"selltime" -> d("set_time"),
+						"selltime" -> d("launch_time"),
 						"medicalinsurance" -> d("insure_type"),
 						"development" -> d("research_type"),
 						"companyprice" -> d("ref_price")
 					)
 				) ++ (head("relationship") \ "compete_goods").as[List[String Map JsValue]].flatMap { cg =>
 					connect_goods.filter(f => f("id").as[String] == cg("goods_id").as[String]).map { d =>
-						Map("product_name" -> d("med_name"),
+						Map("product_name" -> d("brand_name"),
 							"type" -> toJson(x._1),
 							"treatmentarea" -> d("therapeutic_field"),
-							"selltime" -> d("set_time"),
+							"selltime" -> d("launch_time"),
 							"medicalinsurance" -> d("insure_type"),
 							"development" -> d("research_type"),
 							"companyprice" -> d("ref_price")
@@ -169,9 +165,8 @@ trait FormatScenarioTrait extends cdr {
 				}
 
 				val history = jvdr(m("scenario"))("post").as[List[String Map JsValue]].flatMap { p =>
-//					val reVal = queryReport(p("report_id").as[String])(dr)
 
-					p("dest_goods_reso").as[List[String Map JsValue]].map { x =>
+					p("dest_goods_reso").as[List[String Map JsValue]].filter(f => f("dest_id").as[String] == hospital_id).map { x =>
 						p("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x("reso_id").as[String]).
 							map( d =>
 								Map("time" -> toJson(s"周期${p("phase").as[Int]}"),
@@ -186,7 +181,6 @@ trait FormatScenarioTrait extends cdr {
 							).getOrElse(throw new Exception("is null"))
 					}
 				}
-
 
 				Map("id" -> head("id"),
 					"name" -> toJson(x._1),
@@ -211,7 +205,6 @@ trait FormatScenarioTrait extends cdr {
 				)
 			}.toList
 
-			
 			
 			(Some(Map("result" -> toJson(
 				Map("hospital" -> toJson(hospital),
