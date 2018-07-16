@@ -14,7 +14,6 @@ object ScenarioFormatModule extends ModuleTrait with FormatScenarioTrait {
         case msg_formatQueryBudget(_) => format(pr)(formatBudget)
         case msg_formatQueryHumans(_) => format(pr)(formatHumans)
         case msg_formatQueryHospitalDetails(data) =>
-//            (pr, None)
             format(pr.map( _ ++: data.as[JsObject].value.toMap).orElse(pr))(formatHospitalDetails)
         case _ => ???
     }

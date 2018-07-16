@@ -29,20 +29,15 @@ trait FormatScenarioTrait extends cdr {
 			}
 		}
 	}
-	
-//	val searchJv: JsValue => String Map JsValue = {
-//
-//	}
-	
+
 	val formatHospitals: String Map JsValue => (Option[String Map JsValue], Option[JsValue])  = { m =>
-		
-//		val aa = (m("scenario") \ "ps")//.isInstanceOf[JsUndefined]
-//		println(aa)
-		
-		
 		val data = jvdr(jvdr(m("scenario"))("current"))
+		val phase = data("phase").as[Int]
+		val dest_goods = jvdr(m("scenario"))("past").as[List[String Map JsValue]].
+			find(f => f("phase").as[Int] == phase - 1).get("dest_goods").as[List[String Map JsValue]]
+		
 		val reVal = data("dest_goods").as[List[String Map JsValue]].groupBy(g => g("dest_id").as[String]).map { dg =>
-			
+
 			val hospital = data("connect_dest").as[List[String Map JsValue]].find(f => f("id").as[String] == dg._1).map ( x =>
 				Map("hospid" -> x("id"),
 					"name" -> x("hosp_name"),
@@ -56,15 +51,20 @@ trait FormatScenarioTrait extends cdr {
 			).getOrElse(throw new Exception("is null"))
 			
 			val goods = dg._2.map { g =>
-				data("connect_goods").as[List[String Map JsValue]].find(f => g("goods_id").as[String] == f("id").as[String]).map ( x =>
+				val sales = dest_goods.find(f => f("goods_id").as[String] == g("goods_id").as[String] &&
+							f("dest_id").as[String] == g("dest_id").as[String] ).
+						map(x => toJson((x("relationship") \ "sales").as[Double])).getOrElse(toJson(0))
+				
+				data("connect_goods").as[List[String Map JsValue]].find(f => g("goods_id").as[String] == f("id").as[String]).map { x =>
+					
 					Map("id" -> x("id"),
 						"name" -> x("category"),
 						"share" -> (g("relationship") \ "share").as[JsValue],
-						"previoussales" -> (g("relationship") \ "pre_sales").as[JsValue],
-						"marketpotential" -> (g("relationship") \ "potential").as[JsValue],
-						"contributionrate" -> (g("relationship") \ "cont_rate").as[JsValue])
-				
-				).getOrElse(throw new Exception("is null"))
+						"previoussales" -> sales,
+						"marketpotential" -> (g("relationship") \ "potential_growth").as[JsValue],
+						"contributionrate" -> (g("relationship") \ "contri_rate").as[JsValue])
+
+				}.getOrElse(throw new Exception("is null"))
 			}
 			
 			val representative = data("dest_reso").as[List[String Map JsValue]].filter(f => dg._1 == f("dest_id").as[String]).flatMap ( x =>
@@ -72,9 +72,9 @@ trait FormatScenarioTrait extends cdr {
 					Map("name" -> r("rep_name"), "avatar" -> r("avatar"))
 				)
 			)
-			
+
 			hospital ++ Map("medicines" -> toJson(goods)) ++ Map("representives" -> toJson(representative))
-			
+
 		}.toList
 		
 		(Some(Map("result" -> toJson(
@@ -87,22 +87,22 @@ trait FormatScenarioTrait extends cdr {
 	val formatBudget: String Map JsValue=> (Option[String Map JsValue], Option[JsValue]) = { m =>
 		val data = jvdr(jvdr(m("scenario"))("current"))
 		val total = data("connect_reso").as[List[String Map JsValue]].find(f => f("type").as[String] == "money").
-			map( x => Map("total" -> (x("relationship") \ "total_budget_money").as[JsValue])).
+			map( x => Map("total" -> (x("relationship") \ "value").as[JsValue])).
 			getOrElse(throw new Exception("is null"))
 		val used = data("dest_goods_reso").as[List[String Map JsValue]].
-			map(x => (x("relationship") \ "user_budget_money").as[Double]).sum
+			map(x => (x("relationship") \ "user_input_money").as[Double]).sum
 		(Some(Map("result" -> toJson(total ++ Map("used" -> toJson(used))))), None)
 	}
 	
 	val formatHumans: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
 		val data = jvdr(jvdr(m("scenario"))("current"))
 		val total = data("connect_reso").as[List[String Map JsValue]].
-				find(f => f("type").as[String] == "day").map(x => (x("relationship") \ "total_budget_day").as[Int]).
+				find(f => f("type").as[String] == "day").map(x => (x("relationship") \ "value").as[Int]).
 				getOrElse(throw new Exception("is null"))
 		
 		val reVal = data("dest_goods_reso").as[List[String Map JsValue]].groupBy(g => g("reso_id").as[String]).flatMap { x =>
 			data("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x._1).map { y =>
-				val used = x._2.map(z => (z("relationship") \ "user_budget_day").as[Double]).sum
+				val used = x._2.map(z => (z("relationship") \ "user_input_day").as[Double]).sum
 				Map("name" -> y("rep_name"),
 					"total" -> toJson(total),
 					"used" -> toJson(used))
