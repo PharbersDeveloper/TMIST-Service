@@ -111,7 +111,7 @@ trait FormatScenarioTrait extends cdr {
 			find(f => f("type").as[String] == "day").map(x => (x("relationship") \ "value").as[Int]).
 			getOrElse(throw new Exception("is null"))
 		
-		val reVal = data("dest_goods_reso").as[List[String Map JsValue]].groupBy(g => g("reso_id").as[String]).flatMap { x =>
+		val reVal = data("dest_goods_reso").as[List[String Map JsValue]].groupBy(g => g("rep_id").as[String]).flatMap { x =>
 			data("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x._1).map { y =>
 				val used = x._2.map(z => (z("relationship") \ "user_input_day").as[Double]).sum
 				Map("name" -> y("rep_name"),
@@ -172,7 +172,7 @@ trait FormatScenarioTrait extends cdr {
 			val history = past.flatMap { p =>
 				p("dest_goods_reso").as[List[String Map JsValue]].
 					filter(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).map { x =>
-					p("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x("reso_id").as[String]).map { d =>
+					p("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
 						Map("time" -> toJson(s"周期${p("phase").as[Int]}"),
 							"representative" -> d("rep_name"),
 							"timemanagement" -> (x("relationship") \ "user_input_day").as[JsValue],
