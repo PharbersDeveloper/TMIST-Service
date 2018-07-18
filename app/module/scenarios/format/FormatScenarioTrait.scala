@@ -29,18 +29,13 @@ trait FormatScenarioTrait extends cdr {
 	
 	def searchJv(jv: JsValue)(key: String): String Map JsValue = {
 		val mpjv = jv.as[JsObject].value.toMap
-		if (mpjv.contains(key)) {
-			Map(key -> mpjv(key))
-		} else {
-			mpjv.map { x =>
+		if (mpjv.contains(key)) {Map(key -> mpjv(key))} else {
+			mpjv.filter(f => f._2.isInstanceOf[JsObject] || f._2.isInstanceOf[JsArray]).flatMap { x =>
 				x._2 match {
-					case obj: JsObject =>
-						searchJv(obj.as[JsValue])(key)
-					case array: JsArray =>
-						array.value.toList.map(searchJv(_)(key)).head
-					case _ => searchJv(toJson(mpjv - x._1))(key)
+					case obj: JsObject => searchJv(obj.as[JsValue])(key)
+					case array: JsArray => array.value.toList.map(searchJv(_)(key)).head
 				}
-			}.head
+			}
 		}
 	}
 	
