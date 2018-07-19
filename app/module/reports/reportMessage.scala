@@ -13,7 +13,7 @@ object ProposalMessage {
 
     case class msg_queryTotalReport(data: JsValue) extends msg_ReportCommand
     case class msg_queryDestsGoodsReport(data : JsValue) extends msg_ReportCommand
-    case class msg_queryResosGoodsReport(data : JsValue) extends msg_ReportCommand
-    case class msg_queryResosIO(data : JsValue) extends msg_ReportCommand
+    case class msg_queryRepGoodsReport(data : JsValue) extends msg_ReportCommand
+    case class msg_queryResoAllocation(data : JsValue) extends msg_ReportCommand
     case class msg_queryRepIndResos(data : JsValue) extends msg_ReportCommand
 }

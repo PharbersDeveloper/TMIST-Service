@@ -18,13 +18,13 @@ object ReportModule extends ModuleTrait {
         case msg_queryReport(data) =>
             processor (value => returnValue(query(value)(names)))(data)
         case msg_queryTotalReport(_) =>
-            (Some(Map("result" -> pr.get("total_report"))), None)
+            (Some(Map("result" -> pr.get("summary_report"))), None)
         case msg_queryDestsGoodsReport(_) =>
             (Some(Map("result" -> pr.get("dests_goods_report"))), None)
-        case msg_queryResosGoodsReport(_) =>
-            (Some(Map("result" -> pr.get("resos_goods_report"))), None)
-        case msg_queryResosIO(_) =>
-            (Some(Map("result" -> pr.get("resos_io"))), None)
+        case msg_queryRepGoodsReport(_) =>
+            (Some(Map("result" -> pr.get("rep_goods_report"))), None)
+        case msg_queryResoAllocation(_) =>
+            (Some(Map("result" -> pr.get("reso_allocation_report"))), None)
         case msg_queryRepIndResos(_) =>
             (Some(Map("result" -> pr.get("rep_ind_resos"))), None)
 

@@ -44,23 +44,23 @@ class ReportController @Inject()(implicit cc: ControllerComponents, as_inject: A
         }
     }
 
-    def queryResosGoodsReport() = Action { request =>
+    def queryRepGoodsReport() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query resourse goods RelationReport"))), jv)
                     :: msg_authParseToken(jv)
                     :: msg_queryReport(jv)
-                    :: msg_queryResosGoodsReport(jv)
+                    :: msg_queryRepGoodsReport(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
     }
 
-    def queryResosIO() = Action { request =>
+    def queryResoAllocation() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query resourse intput output RelationReport"))), jv)
                     :: msg_authParseToken(jv)
                     :: msg_queryReport(jv)
-                    :: msg_queryResosIO(jv)
+                    :: msg_queryResoAllocation(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
