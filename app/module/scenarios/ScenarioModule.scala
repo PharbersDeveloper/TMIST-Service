@@ -22,6 +22,8 @@ object ScenarioModule extends ModuleTrait {
             processor (value => returnValue(queryMulti(value)(names)(qc, dr, cm).head, name))(MergeStepResult(data, sortCond))
         case msg_queryHospsByScenario(data) =>
             processor (_ => returnValue(queryConnectData(pr)("connect_dest")("dests")(dr)))(data)
+        case msg_queryRepsByScenario(data) =>
+            processor (_ => returnValue(queryConnectData(pr)("connect_rep")("representatives")(dr)))(data)
         case msg_queryResosByScenario(data) =>
             processor (_ => returnValue(queryConnectData(pr)("connect_reso")("resources")(dr)))(data)
         case msg_queryGoodsByScenario(data) =>

@@ -23,6 +23,7 @@ trait FormatScenarioTrait extends cdr {
 				case bool: JsBoolean => m._1 -> toJson(bool)
 				case obj: JsObject => m._1 -> toJson(jvdr(obj.as[JsValue]))
 				case array: JsArray => m._1 -> toJson(array.value.toList.map(x => jvdr(x)))
+				case _ => ???
 			}
 		}
 	}
@@ -34,6 +35,7 @@ trait FormatScenarioTrait extends cdr {
 				x._2 match {
 					case obj: JsObject => searchJv(obj.as[JsValue])(key)
 					case array: JsArray => array.value.toList.map(searchJv(_)(key)).head
+					case _ => ???
 				}
 			}
 		}
@@ -50,15 +52,15 @@ trait FormatScenarioTrait extends cdr {
 			val hospital = data("connect_dest").as[List[String Map JsValue]].find(f => f("id").as[String] == dg._1).map(x =>
 				Map("hospid" -> x("id"),
 					"name" -> x("hosp_name"),
-					"category" -> x("category"),
+					"category" -> x("hosp_category"),
 					"hosp_level" -> x("hosp_level"),
-					"department" -> x("featured_outpatient"),
+					"department" -> x("focus_department"),
 					"beds" -> x("beds"),
-					"outpatient" -> x("income_outpatient_yearly"),
-					"surgery" -> x("income_surgery_yearly")
+					"outpatient" -> x("outpatient_yearly"),
+					"surgery" -> x("surgery_yearly")
 				)
 			).getOrElse(throw new Exception("is null"))
-			
+
 			val goods = dg._2.map { g =>
 				val sales = dest_goods.find(f => f("goods_id").as[String] == g("goods_id").as[String] &&
 					f("dest_id").as[String] == g("dest_id").as[String]).
@@ -69,7 +71,7 @@ trait FormatScenarioTrait extends cdr {
 				data("connect_goods").as[List[String Map JsValue]].find(f => g("goods_id").as[String] == f("id").as[String]).map { x =>
 					
 					Map("id" -> x("id"),
-						"name" -> x("category"),
+						"name" -> x("prod_category"),
 						"share" -> share,
 						"previoussales" -> sales,
 						"potential" -> (g("relationship") \ "potential").as[JsValue],
@@ -78,9 +80,9 @@ trait FormatScenarioTrait extends cdr {
 				}.getOrElse(throw new Exception("is null"))
 			}
 			
-			val representative = data("dest_reso").as[List[String Map JsValue]].filter(f => dg._1 == f("dest_id").as[String]).flatMap(x =>
-				data("connect_reso").as[List[String Map JsValue]].filter(ff => x("reso_id").as[String] == ff("id").as[String]).map(r =>
-					Map("name" -> r("rep_name"), "avatar" -> r("avatar"))
+			val representative = data("dest_rep").as[List[String Map JsValue]].filter(f => dg._1 == f("dest_id").as[String]).flatMap(x =>
+				data("connect_rep").as[List[String Map JsValue]].filter(ff => x("rep_id").as[String] == ff("id").as[String]).map(r =>
+					Map("name" -> r("rep_name"), "avatar" -> r("rep_image"))
 				)
 			)
 			
@@ -100,7 +102,7 @@ trait FormatScenarioTrait extends cdr {
 		val total = data("connect_reso").as[List[String Map JsValue]].find(f => f("type").as[String] == "money").
 			map(x => Map("total" -> (x("relationship") \ "value").as[JsValue])).
 			getOrElse(throw new Exception("is null"))
-		val used = data("dest_goods_reso").as[List[String Map JsValue]].
+		val used = data("dest_goods_rep").as[List[String Map JsValue]].
 			map(x => (x("relationship") \ "user_input_money").as[Double]).sum
 		(Some(Map("result" -> toJson(total ++ Map("used" -> toJson(used))))), None)
 	}
@@ -111,8 +113,8 @@ trait FormatScenarioTrait extends cdr {
 			find(f => f("type").as[String] == "day").map(x => (x("relationship") \ "value").as[Int]).
 			getOrElse(throw new Exception("is null"))
 		
-		val reVal = data("dest_goods_reso").as[List[String Map JsValue]].groupBy(g => g("rep_id").as[String]).flatMap { x =>
-			data("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x._1).map { y =>
+		val reVal = data("dest_goods_rep").as[List[String Map JsValue]].groupBy(g => g("rep_id").as[String]).flatMap { x =>
+			data("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x._1).map { y =>
 				val used = x._2.map(z => (z("relationship") \ "user_input_day").as[Double]).sum
 				Map("name" -> y("rep_name"),
 					"total" -> toJson(total),
@@ -134,13 +136,13 @@ trait FormatScenarioTrait extends cdr {
 			Map("id" -> toJson(hospital_id),
 				"name" -> x("hosp_name"),
 				"basicinfo" -> toJson(
-					Map("type" -> x("category"),
+					Map("type" -> x("hosp_category"),
 						"hosp_level" -> x("hosp_level"),
-						"department" -> x("featured_department"),
+						"department" -> x("focus_department"),
 						"beds" -> x("beds"),
-						"outpatient" -> x("income_outpatient_yearly"),
-						"surgery" -> x("income_surgery_yearly"),
-						"hospitalizations" -> x("income_inpatient_yearly"))),
+						"outpatient" -> x("outpatient_yearly"),
+						"surgery" -> x("surgery_yearly"),
+						"hospitalizations" -> x("inpatient_yearly"))),
 				"news" -> Json.parse("{}"),
 				"policy" -> Json.parse("{}")
 			)).getOrElse(throw new Exception("is null"))
@@ -153,8 +155,8 @@ trait FormatScenarioTrait extends cdr {
 			val basicInfo = ((details("relationship") \ "compete_goods").as[List[String Map JsValue]].
 				map(x => x("goods_id").as[String]) :+ details("goods_id").as[String]).map { x =>
 				connect_goods.find(f => f("id").as[String] == x).map { d =>
-					Map("product_name" -> d("brand_name"),
-						"type" -> details("category"),
+					Map("product_name" -> d("prod_name"),
+						"type" -> details("prod_category"),
 						"treatmentarea" -> d("therapeutic_field"),
 						"selltime" -> d("launch_time"),
 						"medicalinsurance" -> d("insure_type"),
@@ -170,9 +172,9 @@ trait FormatScenarioTrait extends cdr {
 				as[List[String Map JsValue]].find(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).get
 			
 			val history = past.flatMap { p =>
-				p("dest_goods_reso").as[List[String Map JsValue]].
+				p("dest_goods_rep").as[List[String Map JsValue]].
 					filter(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).map { x =>
-					p("connect_reso").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
+					p("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
 						Map("time" -> toJson(s"周期${p("phase").as[Int]}"),
 							"representative" -> d("rep_name"),
 							"timemanagement" -> (x("relationship") \ "user_input_day").as[JsValue],
@@ -194,7 +196,7 @@ trait FormatScenarioTrait extends cdr {
 				Map("key" -> toJson("上期贡献率"), "value" -> (details("relationship") \ "contri_rate").as[JsValue]) :: Nil
 			
 			Map("id" -> details("id"),
-				"name" -> toJson(details("category")),
+				"name" -> toJson(details("prod_category")),
 				"overview" -> toJson(overview),
 				"detail" -> toJson(Map(
 					"id" -> toJson(s"${details("id").as[String]}_detail"),
