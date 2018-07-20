@@ -13,33 +13,7 @@ trait FormatScenarioTrait extends SearchData {
 			case Some(o) => out(o)
 		}
 	}
-	
-	val jvdr: JsValue => String Map JsValue = { jv =>
-		jv.as[String Map JsValue].map { m =>
-			m._2 match {
-				case str: JsString => m._1 -> toJson(str)
-				case num: JsNumber => m._1 -> toJson(num)
-				case bool: JsBoolean => m._1 -> toJson(bool)
-				case obj: JsObject => m._1 -> toJson(jvdr(obj.as[JsValue]))
-				case array: JsArray => m._1 -> toJson(array.value.toList.map(x => jvdr(x)))
-				case _ => ???
-			}
-		}
-	}
-	
-	def searchJv(jv: JsValue)(key: String): String Map JsValue = {
-		val mpjv = jv.as[JsObject].value.toMap
-		if (mpjv.contains(key)) {Map(key -> mpjv(key))} else {
-			mpjv.filter(f => f._2.isInstanceOf[JsObject] || f._2.isInstanceOf[JsArray]).flatMap { x =>
-				x._2 match {
-					case obj: JsObject => searchJv(obj.as[JsValue])(key)
-					case array: JsArray => array.value.toList.map(searchJv(_)(key)).head
-					case _ => ???
-				}
-			}
-		}
-	}
-	
+
 	val formatHospitals: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
 		val current = searchJSValue(m("scenario"))("current")("current")
 		val phase = searchJSValue(current)("phase")("phase").as[Int]
@@ -49,56 +23,46 @@ trait FormatScenarioTrait extends SearchData {
 		
 		val reVal = searchJSValue(current)("dest_goods")("dest_goods").as[List[String Map JsValue]].
 			groupBy(g => g("dest_id").as[String]).map { dest_goods =>
-				val hospital = searchJSValue(current)("connect_dest")("connect_dest").as[List[String Map JsValue]].
-					find(f => f("id").as[String] == dest_goods._1).map ( dest_info =>
-						Map("hospid" -> dest_info("id"),
-							"name" -> dest_info("hosp_name"),
-							"category" -> dest_info("category"),
-							"hosp_level" -> dest_info("hosp_level"),
-							"department" -> dest_info("featured_outpatient"),
-							"beds" -> dest_info("beds"),
-							"outpatient" -> dest_info("income_outpatient_yearly"),
-							"surgery" -> dest_info("income_surgery_yearly")
-						)).getOrElse(Map.empty)
+			val hospital = searchJSValue(current)("connect_dest")("connect_dest").as[List[String Map JsValue]].
+				find(f => f("id").as[String] == dest_goods._1).map ( dest_info =>
+					Map("hospid" -> dest_info("id"),
+						"name" -> dest_info("hosp_name"),
+						"category" -> dest_info("hosp_category"),
+						"hosp_level" -> dest_info("hosp_level"),
+						"department" -> dest_info("focus_department"),
+						"beds" -> dest_info("beds"),
+						"outpatient" -> dest_info("outpatient_yearly"),
+						"surgery" -> dest_info("surgery_yearly")
+					)).getOrElse(Map.empty)
 			
-			val hospital = data("connect_dest").as[List[String Map JsValue]].find(f => f("id").as[String] == dg._1).map(x =>
-				Map("hospid" -> x("id"),
-					"name" -> x("hosp_name"),
-					"category" -> x("hosp_category"),
-					"hosp_level" -> x("hosp_level"),
-					"department" -> x("focus_department"),
-					"beds" -> x("beds"),
-					"outpatient" -> x("outpatient_yearly"),
-					"surgery" -> x("surgery_yearly")
-				)
-			).getOrElse(throw new Exception("is null"))
-
-			val goods = dg._2.map { g =>
-				val sales = dest_goods.find(f => f("goods_id").as[String] == g("goods_id").as[String] &&
-					f("dest_id").as[String] == g("dest_id").as[String]).
-					map(x => toJson((x("relationship") \ "sales").as[Double])).getOrElse(toJson(0))
-				val share = dest_goods.find(f => f("goods_id").as[String] == g("goods_id").as[String] &&
-					f("dest_id").as[String] == g("dest_id").as[String]).
-					map(x => toJson((x("relationship") \ "share").as[Double])).getOrElse(toJson(0))
-				data("connect_goods").as[List[String Map JsValue]].find(f => g("goods_id").as[String] == f("id").as[String]).map { x =>
-					
-					Map("id" -> x("id"),
-						"name" -> x("prod_category"),
-						"share" -> share,
-						"previoussales" -> sales,
-						"potential" -> (g("relationship") \ "potential").as[JsValue],
-						"contributionrate" -> (g("relationship") \ "contri_rate").as[JsValue])
-					
-				}.getOrElse(throw new Exception("is null"))
+			
+			val medicines = dest_goods._2.map { goods =>
+				val prev = past_dest_goods.find(f => f("goods_id").as[String] == goods("goods_id").as[String] &&
+					f("dest_id").as[String] == goods("dest_id").as[String]).map ( x =>
+					Map("share" -> searchJSValue(toJson(x))("share")("share"),
+						"sales" -> searchJSValue(toJson(x))("sales")("sales"))
+				).getOrElse(Map("share" -> toJson(0), "sales" -> toJson(0)))
+				
+				connect_goods.find(f => f("id").as[String] == goods("goods_id").as[String]).map ( goods_info =>
+					Map("id" -> goods_info("id"),
+						"name" -> goods_info("prod_category"),
+						"share" -> prev("share"),
+						"previoussales" -> prev("sales"),
+						"potential" -> searchJSValue(toJson(goods))("potential")("potential"),
+						"contributionrate" -> searchJSValue(toJson(goods))("contri_rate")("contri_rate")
+					)).getOrElse(Map.empty)
 			}
 			
-			val representative = data("dest_rep").as[List[String Map JsValue]].filter(f => dg._1 == f("dest_id").as[String]).flatMap(x =>
-				data("connect_rep").as[List[String Map JsValue]].filter(ff => x("rep_id").as[String] == ff("id").as[String]).map(r =>
-					Map("name" -> r("rep_name"), "avatar" -> r("rep_image"))
-				)
+			val representative = searchJSValue(current)("dest_rep")("dest_rep").as[List[String Map JsValue]].
+				filter(f => f("dest_id").as[String] == dest_goods._1).map ( x =>
+				searchJSValue(current)("connect_rep")("connect_rep").as[List[String Map JsValue]].
+					find( f => f("id").as[String] == x("rep_id").as[String]).map( reso =>
+					Map("name" -> reso("rep_name"), "avatar" -> reso("rep_image"))
+				).getOrElse(Map.empty)
+			)
 			
-				hospital ++ Map("medicines" -> toJson(medicines)) ++ Map("representives" -> toJson(representative))
-			}.toList
+			hospital ++ Map("medicines" -> toJson(medicines)) ++ Map("representives" -> toJson(representative))
+		}.toList
 		
 		(Some(Map("result" -> toJson(
 			Map("currentMonth" -> searchJSValue(current)("name")("name"),
@@ -108,13 +72,12 @@ trait FormatScenarioTrait extends SearchData {
 	}
 	
 	val formatBudget: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
-		val data = jvdr(jvdr(m("scenario"))("current"))
-		val total = data("connect_reso").as[List[String Map JsValue]].find(f => f("type").as[String] == "money").
-			map(x => Map("total" -> (x("relationship") \ "value").as[JsValue])).
-			getOrElse(throw new Exception("is null"))
-		val used = data("dest_goods_rep").as[List[String Map JsValue]].
-			map(x => (x("relationship") \ "user_input_money").as[Double]).sum
-		(Some(Map("result" -> toJson(total ++ Map("used" -> toJson(used))))), None)
+		val current = searchJSValue(m("scenario"))("current")("current")
+		val total = searchJSValue(current)("connect_reso")("connect_reso").as[List[String Map JsValue]].find(f => f("type").as[String] == "money").
+			map(x =>searchJSValue(toJson(x))("value")("value")).getOrElse(toJson(0))
+		val used = searchJSValue(current)("dest_goods_rep")("dest_goods_rep").as[List[String Map JsValue]].
+			map( x => searchJSValue(toJson(x))("user_input_money")("user_input_money").as[Double]).sum
+		(Some(Map("result" -> toJson(Map("total" -> toJson(total)) ++ Map("used" -> toJson(used))))), None)
 	}
 	
 	val formatHumans: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
@@ -122,19 +85,18 @@ trait FormatScenarioTrait extends SearchData {
 		val total = searchJSValue(current)("connect_reso")("connect_reso").as[List[String Map JsValue]].find(f => f("type").as[String] == "day").
 			map(x =>searchJSValue(toJson(x))("value")("value")).getOrElse(toJson(0))
 		
-		val reVal = data("dest_goods_rep").as[List[String Map JsValue]].groupBy(g => g("rep_id").as[String]).flatMap { x =>
-			data("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x._1).map { y =>
-				val used = x._2.map(z => (z("relationship") \ "user_input_day").as[Double]).sum
-				Map("name" -> y("rep_name"),
-					"total" -> toJson(total),
-					"used" -> toJson(used))
-			}
+		val reVal = searchJSValue(current)("dest_goods_rep")("dest_goods_rep").as[List[String Map JsValue]].
+			groupBy(g => g("rep_id").as[String]).map { x =>
+			searchJSValue(current)("connect_rep")("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x._1).map { rep =>
+				val used = x._2.map(z => searchJSValue(toJson(z))("user_input_day")("user_input_day").as[Double]).sum
+				Map("name" -> rep("rep_name"), "total" -> toJson(total), "used" -> toJson(used))
+			}.getOrElse(Map.empty)
 		}.toList
-
 		(Some(Map("result" -> toJson(reVal))), None)
 	}
 	
 	val formatHospitalDetails: String Map JsValue => (Option[String Map JsValue], Option[JsValue]) = { m =>
+		
 		val hospital_id = searchJSValue(m("data"))("hospital_id")("hospital_id").as[String]
 		val current = searchJSValue(m("scenario"))("current")("current")
 		val past = searchJSValue(m("scenario"))("past")("past").as[List[String Map JsValue]]
@@ -220,7 +182,6 @@ trait FormatScenarioTrait extends SearchData {
 				))
 			)
 		}
-		
 		
 		(Some(Map("result" -> toJson(
 			Map("hospital" -> toJson(hospital),
