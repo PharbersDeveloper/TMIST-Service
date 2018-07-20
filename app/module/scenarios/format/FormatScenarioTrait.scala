@@ -102,6 +102,7 @@ trait FormatScenarioTrait extends SearchData {
 		val past = searchJSValue(m("scenario"))("past")("past").as[List[String Map JsValue]]
 		val connect_goods = searchJSValue(current)("connect_goods")("connect_goods").as[List[String Map JsValue]]
 		val phase = searchJSValue(current)("phase")("phase").as[Int]
+		val p = past.find(f => f("phase").as[Int] == phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
 		
 		val hospital = searchJSValue(current)("connect_dest")("connect_dest").as[List[String Map JsValue]].
 			find(f => f("id").as[String] == hospital_id).map(x =>
@@ -138,9 +139,7 @@ trait FormatScenarioTrait extends SearchData {
 				}.getOrElse(throw new Exception(""))
 			}
 			
-			val p = past.find(f => f("phase").as[Int] == phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
-			
-			val mmp = searchJSValue(p)("dest_goods")("dest_goods").
+			val profile = searchJSValue(p)("dest_goods")("dest_goods").
 				as[List[String Map JsValue]].find(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).get
 			
 			val history = past.flatMap { p =>
@@ -162,9 +161,9 @@ trait FormatScenarioTrait extends SearchData {
 			
 			val overview = Map("key" -> toJson("药品市场潜力"), "value" -> (details("relationship") \ "potential").as[JsValue]) ::
 				Map("key" -> toJson("增长潜力"), "value" -> (details("relationship") \ "potential_growth").as[JsValue]) ::
-				Map("key" -> toJson("上期销售额"), "value" -> (mmp("relationship") \ "sales").as[JsValue]) ::
-				Map("key" -> toJson("上期增长"), "value" -> (mmp("relationship") \ "sales_growth").as[JsValue]) ::
-				Map("key" -> toJson("份额"), "value" -> (mmp("relationship") \ "share").as[JsValue]) ::
+				Map("key" -> toJson("上期销售额"), "value" -> (profile("relationship") \ "sales").as[JsValue]) ::
+				Map("key" -> toJson("上期增长"), "value" -> (profile("relationship") \ "sales_growth").as[JsValue]) ::
+				Map("key" -> toJson("份额"), "value" -> (profile("relationship") \ "share").as[JsValue]) ::
 				Map("key" -> toJson("上期贡献率"), "value" -> (details("relationship") \ "contri_rate").as[JsValue]) :: Nil
 			
 			Map("id" -> details("id"),
