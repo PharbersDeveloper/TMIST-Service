@@ -78,11 +78,8 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query hosp lst in proposal"))), jv)
                     :: msg_authParseToken(jv)
-                    :: msg_queryScenarios(jv)
-                    :: msg_queryHospsByScenario(jv)
-                    :: msg_queryResosByScenario(jv)
-                    :: msg_queryGoodsByScenario(jv)
-                    :: msg_formatQueryHospLst(jv)
+                    :: msg_queryScenariosDetail(jv)
+                    ::: msg_formatQueryHospLst(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
@@ -91,12 +88,9 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
     def queryBudgetInfo() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query budget info in proposal"))), jv)
-					:: msg_authParseToken(jv)
-					:: msg_queryScenarios(jv)
-					:: msg_queryHospsByScenario(jv)
-					:: msg_queryResosByScenario(jv)
-					:: msg_queryGoodsByScenario(jv)
-                    :: msg_formatQueryBudget(jv)
+                    :: msg_authParseToken(jv)
+                    :: msg_queryScenariosDetail(jv)
+                    ::: msg_formatQueryBudget(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
@@ -105,12 +99,9 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
     def queryHumansInfo() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("query humans info in proposal"))), jv)
-					:: msg_authParseToken(jv)
-					:: msg_queryScenarios(jv)
-					:: msg_queryHospsByScenario(jv)
-					:: msg_queryResosByScenario(jv)
-					:: msg_queryGoodsByScenario(jv)
-                    :: msg_formatQueryHumans(jv)
+                    :: msg_authParseToken(jv)
+                    :: msg_queryScenariosDetail(jv)
+                    ::: msg_formatQueryHumans(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }
@@ -119,12 +110,9 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
     def queryHospDetail() = Action { request =>
         requestArgsQuery().requestArgs(request) { jv =>
             MessageRoutes(msg_log(toJson(Map("method" -> toJson("get hosp detail"))), jv)
-            		:: msg_authParseToken(jv)
-					:: msg_queryScenarios(jv)
-					:: msg_queryHospsByScenario(jv)
-					:: msg_queryResosByScenario(jv)
-					:: msg_queryGoodsByScenario(jv)
-	                :: msg_formatQueryHospitalDetails(jv)
+                    :: msg_authParseToken(jv)
+                    :: msg_queryScenariosDetail(jv)
+                    ::: msg_formatQueryHospitalDetails(jv)
                     :: msg_JsonapiAdapter(jv)
                     :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
         }

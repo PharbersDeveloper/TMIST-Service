@@ -11,8 +11,20 @@ abstract class msg_ScenarioCommand extends CommonMessage("scenario", ScenarioMod
 abstract class msg_ScenarioFormatCommand extends CommonMessage("scenario", ScenarioFormatModule)
 
 object ProposalMessage {
+
+    object msg_queryScenariosDetail {
+        def apply(data: JsValue): List[msg_ScenarioCommand] =
+            msg_queryScenarios(data) ::
+                    msg_queryHospsByScenario(data) ::
+                    msg_queryRepsByScenario(data) ::
+                    msg_queryResosByScenario(data) ::
+                    msg_queryGoodsByScenario(data) ::
+                    Nil
+    }
+
     case class msg_queryScenarios(data: JsValue) extends msg_ScenarioCommand
     case class msg_queryHospsByScenario(data: JsValue) extends msg_ScenarioCommand
+    case class msg_queryRepsByScenario(data: JsValue) extends msg_ScenarioCommand
     case class msg_queryResosByScenario(data: JsValue) extends msg_ScenarioCommand
     case class msg_queryGoodsByScenario(data: JsValue) extends msg_ScenarioCommand
 
