@@ -11,6 +11,7 @@ trait SearchData {
 				x._2 match {
 					case obj: JsObject => searchJSValue(obj.as[JsValue])(key)
 					case array: JsArray => array.value.toList.map(searchJSValue(_)(key)).head
+					case _: JsValue => ???
 				}
 			)
 		}

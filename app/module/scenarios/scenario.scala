@@ -77,7 +77,6 @@ class scenario extends ClassTag[scenario] with cdr {
     }
 
 
-
     //    override val popr : DBObject => Map[String, JsValue] = { _ =>
     //        Map(
     //            "pop proposal" -> toJson("success")
@@ -95,12 +94,4 @@ class scenario extends ClassTag[scenario] with cdr {
     //        builder.result
     //    }
     //
-    //    override val up2m : (DBObject, JsValue) => DBObject = { (obj, js) =>
-    //        val data = (js \ "data" \ "proposal").asOpt[JsValue].get
-    //
-    //        (data \ "proposal_name").asOpt[String].map (x => obj += "proposal_name" -> x).getOrElse(Unit)
-    //        (data \ "proposal_des").asOpt[String].map (x => obj += "proposal_des" -> x).getOrElse(Unit)
-    //
-    //        obj
-    //    }
 }

@@ -118,4 +118,26 @@ class ProposalController @Inject()(implicit cc: ControllerComponents, as_inject:
         }
     }
 
+    // DGR = Dests + Goods + Rep
+    def updateDGR() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("update dests_goods_rep detail"))), jv)
+                    :: msg_authParseToken(jv)
+                    :: msg_updateDGR(jv)
+                    :: msg_JsonapiAdapter(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
+    def current2past() = Action { request =>
+        requestArgsQuery().requestArgs(request) { jv =>
+            MessageRoutes(msg_log(toJson(Map("method" -> toJson("move current to past"))), jv)
+                    :: msg_authParseToken(jv)
+                    :: msg_queryScenariosDetail(jv)
+                    ::: msg_current2past(jv)
+                    :: msg_JsonapiAdapter(jv)
+                    :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
+        }
+    }
+
 }

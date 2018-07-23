@@ -101,9 +101,9 @@ trait FormatScenarioTrait extends SearchData {
 		val current = searchJSValue(m("scenario"))("current")("current")
 		val past = searchJSValue(m("scenario"))("past")("past").as[List[String Map JsValue]]
 		val connect_goods = searchJSValue(current)("connect_goods")("connect_goods").as[List[String Map JsValue]]
-		val phase = searchJSValue(current)("phase")("phase").as[Int]
-		val p = past.find(f => f("phase").as[Int] == phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
-		
+		val c_phase = searchJSValue(current)("phase")("phase").as[Int]
+		val p_phase_obj = past.find(f => f("phase").as[Int] == c_phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
+
 		val hospital = searchJSValue(current)("connect_dest")("connect_dest").as[List[String Map JsValue]].
 			find(f => f("id").as[String] == hospital_id).map(x =>
 			Map("id" -> toJson(hospital_id),
@@ -139,33 +139,41 @@ trait FormatScenarioTrait extends SearchData {
 				}.getOrElse(throw new Exception(""))
 			}
 			
-			val profile = searchJSValue(p)("dest_goods")("dest_goods").
+			val profile = searchJSValue(p_phase_obj)("dest_goods")("dest_goods").
 				as[List[String Map JsValue]].find(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).get
-			
-			val history = past.flatMap { p =>
-				p("dest_goods_rep").as[List[String Map JsValue]].
+
+			val history = past.flatMap { pi =>
+				pi("dest_goods_rep").as[List[String Map JsValue]].
 					filter(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).map { x =>
-					p("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
-						Map("time" -> toJson(s"周期${p("phase").as[Int]}"),
+					pi("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
+						Map("time" -> toJson(s"周期${pi("phase").as[Int]}"),
 							"representative" -> d("rep_name"),
 							"timemanagement" -> (x("relationship") \ "user_input_day").as[JsValue],
 							"budgetallocation" -> (x("relationship") \ "user_input_money").as[JsValue],
 							"budgetratio" -> (x("relationship") \ "budget_proportion").as[JsValue],
-							"indicator" -> (x("relationship") \ "user_input_target").as[JsValue],
+							"target" -> (x("relationship") \ "user_input_target").as[JsValue],
 							"growth" -> (x("relationship") \ "target_growth").as[JsValue],
 							"achievementrate" -> (x("relationship") \ "achieve_rate").as[JsValue]
 						)
 					}
 				}
 			}
-			
+
+			val pre_target = past.filter(x => x("phase").as[Int] == c_phase - 1)
+					.flatMap(x => x("dest_goods_rep").asInstanceOf[JsArray].value.toList)
+		        	.filter(x => x("dest_id").as[String] == hospital_id)
+		        	.filter(x => x("goods_id").as[String] == details("goods_id").as[String])
+		        	.map(x => (x("relationship") \ "user_input_target").as[Long])
+		        	.sum
+
 			val overview = Map("key" -> toJson("药品市场潜力"), "value" -> (details("relationship") \ "potential").as[JsValue]) ::
 				Map("key" -> toJson("增长潜力"), "value" -> (details("relationship") \ "potential_growth").as[JsValue]) ::
 				Map("key" -> toJson("上期销售额"), "value" -> (profile("relationship") \ "sales").as[JsValue]) ::
 				Map("key" -> toJson("上期增长"), "value" -> (profile("relationship") \ "sales_growth").as[JsValue]) ::
 				Map("key" -> toJson("份额"), "value" -> (profile("relationship") \ "share").as[JsValue]) ::
-				Map("key" -> toJson("上期贡献率"), "value" -> (details("relationship") \ "contri_rate").as[JsValue]) :: Nil
-			
+				Map("key" -> toJson("上期贡献率"), "value" -> (details("relationship") \ "contri_rate").as[JsValue]) ::
+				Map("key" -> toJson("上期指标"), "value" -> toJson(pre_target)) :: Nil
+
 			Map("id" -> details("id"),
 				"name" -> toJson(details("prod_category")),
 				"overview" -> toJson(overview),

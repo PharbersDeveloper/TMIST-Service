@@ -10,7 +10,7 @@ import module.scenarios.ProposalMessage._
 import com.pharbers.bmpattern.ModuleTrait
 import com.pharbers.bmmessages.{CommonModules, MessageDefines}
 
-object ScenarioModule extends ModuleTrait {
+object ScenarioQueryModule extends ModuleTrait {
     val s: scenario = impl[scenario]
     import s._
 
@@ -19,7 +19,7 @@ object ScenarioModule extends ModuleTrait {
 
         case msg_queryScenarios(data) =>
             val sortCond = Some(pr.get ++ Map("sort" -> toJson("timestamp")))
-            processor (value => returnValue(queryMulti(value)(names)(qc, dr, cm).head, name))(MergeStepResult(data, sortCond))
+            processor (value => returnValue(queryMulti(value)(names)(qc, dr, cm).last, name))(MergeStepResult(data, sortCond))
         case msg_queryHospsByScenario(data) =>
             processor (_ => returnValue(queryConnectData(pr)("connect_dest")("dests")(dr)))(data)
         case msg_queryRepsByScenario(data) =>

@@ -41,6 +41,8 @@ POST    /api/proposal/hospital/lst      controllers.ProposalController.queryHosp
 POST    /api/proposal/budget/info       controllers.ProposalController.queryBudgetInfo()
 POST    /api/proposal/humans/info       controllers.ProposalController.queryHumansInfo()
 POST    /api/proposal/hospital/detail   controllers.ProposalController.queryHospDetail()
+POST    /api/proposal/update/detail     controllers.ProposalController.updateDGR()
+POST    /api/proposal/currnet_to_past   controllers.ProposalController.current2past()
 
 # 生成报告信息
 POST    /api/report/total               controllers.ReportController.queryTotalReport()
