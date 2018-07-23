@@ -101,8 +101,8 @@ trait FormatScenarioTrait extends SearchData {
 		val current = searchJSValue(m("scenario"))("current")("current")
 		val past = searchJSValue(m("scenario"))("past")("past").as[List[String Map JsValue]]
 		val connect_goods = searchJSValue(current)("connect_goods")("connect_goods").as[List[String Map JsValue]]
-		val phase = searchJSValue(current)("phase")("phase").as[Int]
-		val p = past.find(f => f("phase").as[Int] == phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
+		val c_phase = searchJSValue(current)("phase")("phase").as[Int]
+		val p_phase_obj = past.find(f => f("phase").as[Int] == c_phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
 		
 		val hospital = searchJSValue(current)("connect_dest")("connect_dest").as[List[String Map JsValue]].
 			find(f => f("id").as[String] == hospital_id).map(x =>
@@ -125,6 +125,11 @@ trait FormatScenarioTrait extends SearchData {
 			map(x => connect_goods.find(f => f("id").as[String] == x("goods_id").as[String]).map(_ ++ x).
 				getOrElse(throw new Exception("is null"))).map { details =>
 			
+			val p_target = searchJSValue(p_phase_obj)("dest_goods_rep")("dest_goods_rep").as[List[String Map JsValue]].
+				filter(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).map(d =>
+				(d("relationship") \ "user_input_target").as[Long]
+			).sum
+			
 			val basicInfo = ((details("relationship") \ "compete_goods").as[List[String Map JsValue]].
 				map(x => x("goods_id").as[String]) :+ details("goods_id").as[String]).map { x =>
 				connect_goods.find(f => f("id").as[String] == x).map { d =>
@@ -139,14 +144,14 @@ trait FormatScenarioTrait extends SearchData {
 				}.getOrElse(throw new Exception(""))
 			}
 			
-			val profile = searchJSValue(p)("dest_goods")("dest_goods").
+			val profile = searchJSValue(p_phase_obj)("dest_goods")("dest_goods").
 				as[List[String Map JsValue]].find(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).get
 			
-			val history = past.flatMap { p =>
-				p("dest_goods_rep").as[List[String Map JsValue]].
+			val history = past.flatMap { pi =>
+				pi("dest_goods_rep").as[List[String Map JsValue]].
 					filter(f => f("dest_id").as[String] == hospital_id && f("goods_id").as[String] == details("goods_id").as[String]).map { x =>
-					p("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
-						Map("time" -> toJson(s"周期${p("phase").as[Int]}"),
+					pi("connect_rep").as[List[String Map JsValue]].find(f => f("id").as[String] == x("rep_id").as[String]).map { d =>
+						Map("time" -> toJson(s"周期${pi("phase").as[Int]}"),
 							"representative" -> d("rep_name"),
 							"timemanagement" -> (x("relationship") \ "user_input_day").as[JsValue],
 							"budgetallocation" -> (x("relationship") \ "user_input_money").as[JsValue],
@@ -168,6 +173,7 @@ trait FormatScenarioTrait extends SearchData {
 			
 			Map("id" -> details("id"),
 				"name" -> toJson(details("prod_category")),
+				"p_target" -> toJson(p_target),
 				"overview" -> toJson(overview),
 				"detail" -> toJson(Map(
 					"id" -> toJson(s"${details("id").as[String]}_detail"),
