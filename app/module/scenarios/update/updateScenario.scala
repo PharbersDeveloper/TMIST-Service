@@ -38,38 +38,67 @@ class updateScenario extends ClassTag[updateScenario] {
 
     val upDGR: (DBObject, JsValue) => DBObject = { (obj, js) =>
 
-        val in_cond = (js \ "data" \ "condition").asOpt[JsValue].get.as[JsObject].value - "uuid"
+        val in_data = (js \ "data" \ "data").as[JsArray].value
 
         val current = obj.get("current").asInstanceOf[DBObject]
 
-        val (targetDGR, keepDGR) ={
-            val dgrLst = current.get("dest_goods_rep").asInstanceOf[BasicDBList].toList.map(_.asInstanceOf[DBObject])
+        in_data.foreach { data =>
+            val dest_id = (data \ "dest_id").as[JsString].value
+            val goods_id = (data \ "goods_id").as[JsString].value
+            val rep_id = (data \ "rep_id").as[JsString].value
 
-            val targetDGR = dgrLst.filter(o => o.get("dest_id").asInstanceOf[String] == in_cond("dest_id").asInstanceOf[JsString].value)
-                    .filter(o => o.get("goods_id").asInstanceOf[String] == in_cond("goods_id").asInstanceOf[JsString].value)
-                    .filter(o => o.get("rep_id").asInstanceOf[String] == in_cond("rep_id").asInstanceOf[JsString].value)
+            val (targetDGR, keepDGR) = {
+                val dgrLst = current.get("dest_goods_rep").asInstanceOf[BasicDBList].toList.map(_.asInstanceOf[DBObject])
 
-            val keepDGR = dgrLst diff targetDGR
+                val targetDGR = dgrLst.filter(o => o.get("dest_id").asInstanceOf[String] == dest_id)
+                        .filter(o => o.get("goods_id").asInstanceOf[String] == goods_id)
+                        .filter(o => o.get("rep_id").asInstanceOf[String] == rep_id)
 
-            (targetDGR.head, keepDGR)
+                val keepDGR = dgrLst diff targetDGR
+
+                (targetDGR.headOption, keepDGR)
+            }
+
+            val newTargetDGR = targetDGR match {
+                case Some(old) =>
+                    val relationship = old.get("relationship").asInstanceOf[DBObject]
+                    relationship += "user_input_day" -> int2Integer(data("user_input_day").asInstanceOf[JsNumber].value.toInt)
+                    relationship += "budget_proportion" -> double2Double(data("budget_proportion").asInstanceOf[JsNumber].value.toDouble)
+                    relationship += "user_input_target" -> long2Long(data("user_input_target").asInstanceOf[JsNumber].value.toLong)
+                    relationship += "target_growth" -> double2Double(data("target_growth").asInstanceOf[JsNumber].value.toDouble)
+                    relationship += "user_input_money" -> long2Long(data("user_input_money").asInstanceOf[JsNumber].value.toLong)
+
+                    old += "relationship" -> relationship
+                    old
+                case None =>
+                    val builder = MongoDBObject.newBuilder
+                    builder += "user_input_day" -> int2Integer(data("user_input_day").asInstanceOf[JsNumber].value.toInt)
+                    builder += "budget_proportion" -> double2Double(data("budget_proportion").asInstanceOf[JsNumber].value.toDouble)
+                    builder += "user_input_target" -> long2Long(data("user_input_target").asInstanceOf[JsNumber].value.toLong)
+                    builder += "target_growth" -> double2Double(data("target_growth").asInstanceOf[JsNumber].value.toDouble)
+                    builder += "user_input_money" -> long2Long(data("user_input_money").asInstanceOf[JsNumber].value.toLong)
+
+                    val relationship = builder.result
+                    DBObject(
+                        "dest_id" -> dest_id,
+                        "goods_id" -> goods_id,
+                        "rep_id" -> rep_id,
+                        "relationship" -> relationship
+                    )
+            }
+
+            val dgrLst = MongoDBList(newTargetDGR :: keepDGR: _*).underlying
+
+            current += "dest_goods_rep" -> dgrLst
         }
 
-        val relationship = {
-            val obj = targetDGR.get("relationship").asInstanceOf[DBObject]
-            val tmp = (js \ "data" \ "dgr").as[JsObject].value
-            obj += "user_input_day" -> int2Integer(tmp("user_input_day").asInstanceOf[JsNumber].value.toInt)
-            obj += "budget_proportion" -> double2Double(tmp("budget_proportion").asInstanceOf[JsNumber].value.toDouble)
-            obj += "user_input_target" -> long2Long(tmp("user_input_target").asInstanceOf[JsNumber].value.toLong)
-            obj += "target_growth" -> double2Double(tmp("target_growth").asInstanceOf[JsNumber].value.toDouble)
-            obj += "user_input_money" -> long2Long(tmp("user_input_money").asInstanceOf[JsNumber].value.toLong)
-
-            obj
-        }
-
-        targetDGR += "relationship" -> relationship
-        val dgrLst = MongoDBList(targetDGR :: keepDGR: _*).underlying
-        current += "dest_goods_rep" -> dgrLst
         obj += "current" -> current
+
+        obj
+    }
+
+    val c2p: (DBObject, JsValue) => DBObject = { (obj, js) =>
+
 
         obj
     }

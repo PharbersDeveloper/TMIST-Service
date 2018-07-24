@@ -15,12 +15,15 @@ object ScenarioUpdateModule extends ModuleTrait {
     val us: updateScenario = impl[updateScenario]
     import us._
 
+    val success_result: DBObject => Map[String, JsValue] = { _ => Map("result" -> toJson("update success")) }
+
     def dispatchMsg(msg: MessageDefines)(pr: Option[Map[String, JsValue]])
                    (implicit cm: CommonModules): (Option[Map[String, JsValue]], Option[JsValue]) = msg match {
 
         case msg_updateDGR(data) =>
-            val dr: DBObject => Map[String, JsValue] = { _ => Map("result" -> toJson("update success")) }
-            processor (value => returnValue(update(value)(qc, upDGR, dr)))(data)
+            processor (value => returnValue(update(value)(qc, upDGR, success_result)))(data)
+        case msg_current2past(data) =>
+            processor (value => returnValue(update(value)(qc, c2p, success_result)))(data)
         case _ => ???
     }
 }

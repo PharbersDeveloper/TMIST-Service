@@ -20,9 +20,30 @@ class scenario extends ClassTag[scenario] with cdr {
     override def runtimeClass: Class[_] = classOf[scenario]
 
     val qc: JsValue => DBObject = { js =>
+        val uuid = (js \ "data" \ "condition" \ "uuid").asOpt[String].get
+        DBObject("uuid" -> uuid)
+    }
+
+    val qcm : JsValue => DBObject = { js =>
         val user_id = (js \ "user" \ "user_id").asOpt[String].get
-        val proposal_id = (js \ "data" \ "condition" \ "proposal_id").asOpt[String].get
-        DBObject("user_id" -> user_id, "proposal_id" -> proposal_id)
+        (js \ "user" \ "proposals").as[JsArray].value.toList
+                .map(_.asInstanceOf[JsObject].value) match {
+            case Nil => DBObject("query" -> "none")
+            case ll => $or (ll map (x =>
+                DBObject(
+                    "user_id" -> user_id,
+                    "proposal_id" -> x("proposal_id").as[JsString].value)
+                )
+            )
+        }
+    }
+
+    val ssr : DBObject => Map[String, JsValue] = { obj =>
+        Map(
+            "user_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
+            "proposal_id" -> toJson(obj.getAs[String]("proposal_id").get.toString),
+            "uuid" -> toJson(obj.getAs[String]("uuid").get.toString)
+        )
     }
 
     def queryConnectData(pr: Option[Map[String, JsValue]])
@@ -76,22 +97,4 @@ class scenario extends ClassTag[scenario] with cdr {
         )
     }
 
-
-    //    override val popr : DBObject => Map[String, JsValue] = { _ =>
-    //        Map(
-    //            "pop proposal" -> toJson("success")
-    //        )
-    //    }
-    //
-    //    override val d2m : JsValue => DBObject = { js =>
-    //        val data = (js \ "data" \ "proposal").asOpt[JsValue].map (x => x).getOrElse(toJson(""))
-    //
-    //        val builder = MongoDBObject.newBuilder
-    //        builder += "_id" -> ObjectId.get()      // proposal_id 唯一标示
-    //        builder += "proposal_name" -> (data \ "proposal_name").asOpt[String].map (x => x).getOrElse("")
-    //        builder += "proposal_des" -> (data \ "proposal_des").asOpt[String].map (x => x).getOrElse("")
-    //
-    //        builder.result
-    //    }
-    //
 }
