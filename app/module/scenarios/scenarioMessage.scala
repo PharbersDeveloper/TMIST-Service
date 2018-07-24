@@ -16,7 +16,7 @@ object ProposalMessage {
 
     object msg_queryScenariosDetail {
         def apply(data: JsValue): List[msg_ScenarioQueryCommand] =
-            msg_queryScenarios(data) ::
+            msg_queryScenariosByUUID(data) ::
                     msg_queryHospsByScenario(data) ::
                     msg_queryRepsByScenario(data) ::
                     msg_queryResosByScenario(data) ::
@@ -24,7 +24,7 @@ object ProposalMessage {
                     Nil
     }
 
-    case class msg_queryScenarios(data: JsValue) extends msg_ScenarioQueryCommand
+    case class msg_queryScenariosByUUID(data: JsValue) extends msg_ScenarioQueryCommand
     case class msg_queryHospsByScenario(data: JsValue) extends msg_ScenarioQueryCommand
     case class msg_queryRepsByScenario(data: JsValue) extends msg_ScenarioQueryCommand
     case class msg_queryResosByScenario(data: JsValue) extends msg_ScenarioQueryCommand
