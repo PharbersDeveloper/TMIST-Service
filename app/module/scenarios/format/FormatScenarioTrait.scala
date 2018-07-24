@@ -164,20 +164,12 @@ trait FormatScenarioTrait extends SearchData {
 				}
 			}
 
-			val pre_target = past.filter(x => x("phase").as[Int] == c_phase - 1)
-					.flatMap(x => x("dest_goods_rep").asInstanceOf[JsArray].value.toList)
-		        	.filter(x => x("dest_id").as[String] == hospital_id)
-		        	.filter(x => x("goods_id").as[String] == details("goods_id").as[String])
-		        	.map(x => (x("relationship") \ "user_input_target").as[Long])
-		        	.sum
-
 			val overview = Map("key" -> toJson("药品市场潜力"), "value" -> (details("relationship") \ "potential").as[JsValue]) ::
 				Map("key" -> toJson("增长潜力"), "value" -> (details("relationship") \ "potential_growth").as[JsValue]) ::
 				Map("key" -> toJson("上期销售额"), "value" -> (profile("relationship") \ "sales").as[JsValue]) ::
 				Map("key" -> toJson("上期增长"), "value" -> (profile("relationship") \ "sales_growth").as[JsValue]) ::
 				Map("key" -> toJson("份额"), "value" -> (profile("relationship") \ "share").as[JsValue]) ::
-				Map("key" -> toJson("上期贡献率"), "value" -> (details("relationship") \ "contri_rate").as[JsValue]) ::
-				Map("key" -> toJson("上期指标"), "value" -> toJson(pre_target)) :: Nil
+				Map("key" -> toJson("上期贡献率"), "value" -> (details("relationship") \ "contri_rate").as[JsValue]) :: Nil
 
 			Map("id" -> details("id"),
 				"name" -> toJson(details("prod_category")),
