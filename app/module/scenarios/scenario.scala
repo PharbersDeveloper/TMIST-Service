@@ -38,11 +38,12 @@ class scenario extends ClassTag[scenario] with cdr {
         }
     }
 
-    val ssr : DBObject => Map[String, JsValue] = { obj =>
+    val sr : DBObject => Map[String, JsValue] = { obj =>
         Map(
             "user_id" -> toJson(obj.getAs[ObjectId]("_id").get.toString),
             "proposal_id" -> toJson(obj.getAs[String]("proposal_id").get.toString),
-            "uuid" -> toJson(obj.getAs[String]("uuid").get.toString)
+            "uuid" -> toJson(obj.getAs[String]("uuid").get.toString),
+            "timestamp" -> toJson(obj.getAs[Long]("timestamp").get)
         )
     }
 
