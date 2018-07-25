@@ -105,20 +105,21 @@ trait FormatScenarioTrait extends SearchData {
 		val p_phase_obj = past.find(f => f("phase").as[Int] == c_phase - 1).map(x => toJson(x)).getOrElse(throw new Exception("is null"))
 		
 		val hospital = searchJSValue(current)("connect_dest")("connect_dest").as[List[String Map JsValue]].
-			find(f => f("id").as[String] == hospital_id).map(x =>
+			find(f => f("id").as[String] == hospital_id).map{x =>
+			val basicinfo = Map("key" -> toJson("医院类型"), "value" ->  x("hosp_category")) ::
+							Map("key" -> toJson("医院等级"), "value" ->  x("hosp_level")) ::
+							Map("key" -> toJson("病床数量"), "value" ->  x("focus_department")) ::
+							Map("key" -> toJson("特色科室"), "value" ->  x("beds")) ::
+							Map("key" -> toJson("门诊人次/年"), "value" ->  x("outpatient_yearly")) ::
+							Map("key" -> toJson("手术台数"), "value" ->  x("surgery_yearly")) ::
+							Map("key" -> toJson("住院人数/年"), "value" ->  x("inpatient_yearly")) ::
+							Nil
 			Map("id" -> toJson(hospital_id),
 				"name" -> x("hosp_name"),
-				"basicinfo" -> toJson(
-					Map("type" -> x("hosp_category"),
-						"hosp_level" -> x("hosp_level"),
-						"department" -> x("focus_department"),
-						"beds" -> x("beds"),
-						"outpatient" -> x("outpatient_yearly"),
-						"surgery" -> x("surgery_yearly"),
-						"hospitalizations" -> x("inpatient_yearly"))),
+				"basicinfo" -> toJson(basicinfo),
 				"news" -> Json.parse("{}"),
 				"policy" -> Json.parse("{}")
-			)).getOrElse(throw new Exception("is null"))
+			)}.getOrElse(throw new Exception("is null"))
 		
 		val goods = searchJSValue(current)("dest_goods")("dest_goods").
 			as[List[String Map JsValue]].filter(f => f("dest_id").as[String] == hospital_id).
