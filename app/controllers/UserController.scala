@@ -75,11 +75,12 @@ class UserController @Inject()(implicit cc: ControllerComponents, as_inject: Act
 
     def userLogin = Action(request => requestArgsQuery().requestArgs(request) { jv =>
         MessageRoutes(msg_log(toJson(Map("method" -> toJson("user login"))), jv)
-                :: msg_authWithPassword(jv)
-                :: msg_userRolesInfo(jv)
-                :: msg_userCompanyInfo(jv)
-                :: msg_authSetExpire(jv)
-                :: msg_JsonapiAdapter(jv)
+                :: msg_test(jv)
+//                :: msg_authWithPassword(jv)
+//                :: msg_userRolesInfo(jv)
+//                :: msg_userCompanyInfo(jv)
+//                :: msg_authSetExpire(jv)
+//                :: msg_JsonapiAdapter(jv)
                 :: msg_CommonResultMessage() :: Nil, None)(CommonModules(Some(Map("db" -> dbt, "rd" -> rd))))
     })
 }

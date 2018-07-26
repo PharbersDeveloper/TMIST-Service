@@ -1,13 +1,13 @@
 package module.scenarios
 
-import module.common.{MergeStepResult, processor}
 import module.common.processor._
 import play.api.libs.json.JsValue
 import module.common.stragety.impl
 import module.scenarios.ProposalMessage._
 import com.pharbers.bmpattern.ModuleTrait
-import com.pharbers.bmmessages.{CommonModules, MessageDefines}
+import module.common.{MergeStepResult, processor}
 import com.pharbers.pharbersmacro.CURDMacro.queryMacro
+import com.pharbers.bmmessages.{CommonModules, MessageDefines}
 
 object ScenarioQueryModule extends ModuleTrait {
     val s: scenario = impl[scenario]

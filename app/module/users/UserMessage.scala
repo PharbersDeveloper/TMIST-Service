@@ -22,6 +22,7 @@ object UserMessage {
     case class msg_popUser(data : JsValue) extends msg_UserCommonCommand
     case class msg_queryUser(data : JsValue) extends msg_UserCommonCommand
     case class msg_queryUserMulti(data : JsValue) extends msg_UserCommonCommand
+    case class msg_test(data : JsValue) extends msg_UserCommonCommand
 
     // 用户 公司
     case class msg_bindUserCompanyPre(data: JsValue) extends msg_UserCompanyCommand

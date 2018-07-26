@@ -1,9 +1,11 @@
 package module.users
 
+import com.pharbers.http.HTTP
 import module.common.processor._
 import module.users.UserMessage._
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsObject, JsValue}
 import module.common.stragety.impl
+import play.api.libs.json.Json.toJson
 import com.pharbers.bmpattern.ModuleTrait
 import com.pharbers.pharbersmacro.CURDMacro._
 import module.common.{MergeStepResult, processor}
@@ -23,6 +25,15 @@ object UserModule extends ModuleTrait {
         case msg_popUser(data) => popMacro(qc, popr, data, names)
         case msg_queryUser(data) => queryMacro(qc, dr, MergeStepResult(data, pr), names, name)
         case msg_queryUserMulti(data) => queryMultiMacro(qcm, sr, MergeStepResult(data, pr), names, names)
+
+        case msg_test(data) =>
+
+             val r = HTTP("http://192.168.100.116:7272/api/user/login")
+                     .header("Accept" -> "application/json", "Content-Type" -> "application/json")
+                     .post(data)
+
+            println(r)
+            (pr, None)
 
         case _ => ???
     }
