@@ -56,7 +56,7 @@ libraryDependencies ++= Seq(
 	"log4j" % "log4j" % "1.2.17",
 	"commons-io" % "commons-io" % "2.4",
 	"org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
-	"org.specs2" % "specs2_2.11" % "3.7" % "test"
+	"org.specs2" % "specs2_2.11" % "3.7" % "test",
 
 //	"amplab" % "spark-indexedrdd" % "0.4.0", // kafka可回调后删除
 //	"org.apache.spark" % "spark-core_2.11" % "2.0.0", // kafka可回调后删除
