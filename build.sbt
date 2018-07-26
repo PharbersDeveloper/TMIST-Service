@@ -16,6 +16,9 @@ lazy val root = (project in file(".")).
 		javaOptions += "-Xmx2G"
 	)
 
+	enablePlugins(DockerPlugin)
+    enablePlugins(DockerSpotifyClientPlugin)
+
 // lazy val root = (project in file(".")).
 // 	enablePlugins(PlayScala).
 // 	settings(
@@ -34,6 +37,8 @@ resolvers += Resolver.mavenLocal
 
 libraryDependencies += guice
 libraryDependencies ++= Seq(
+    "com.spotify" % "docker-client" % "8.9.0",
+
 	"commons-httpclient" % "commons-httpclient" % "3.1",
 	"org.mongodb" % "casbah_2.11" % "3.1.1",
 	"com.easemob" % "rest-java-sdk" % "1.0.1",
